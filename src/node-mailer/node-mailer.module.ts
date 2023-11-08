@@ -17,6 +17,9 @@ import { ConfigService } from '@nestjs/config';
             pass: configService.get('mailer.pass'),
           },
         },
+        defaults: {
+          from: `"No Reply" <${configService.get('mailer.user')}>`,
+        }
       }),
     }),
   ],
