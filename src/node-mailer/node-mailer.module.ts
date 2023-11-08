@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { NodeMailerService } from './node-mailer.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -19,11 +21,19 @@ import { ConfigService } from '@nestjs/config';
         },
         defaults: {
           from: `"No Reply" <${configService.get('mailer.user')}>`,
-        }
+        },
+        template: {
+          dir: path.join(__dirname, '../../src/node-mailer/templates'),
+          adapter: new EjsAdapter(),
+          options: {
+            strict: false,
+          },
+        },
       }),
     }),
   ],
   controllers: [],
   providers: [NodeMailerService],
+  exports: [NodeMailerService],
 })
 export class NodeMailerModule {}

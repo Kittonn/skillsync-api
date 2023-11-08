@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@/users/schema/user.schema';
 import { ICreateActivationToken } from '@/shared/types/auth';
+import { NodeMailerService } from '@/node-mailer/node-mailer.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly nodeMailerService: NodeMailerService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -27,7 +29,22 @@ export class AuthService {
       registerDto as User,
     );
 
-    
+    await this.nodeMailerService.sendEmail({
+      to: registerDto.email,
+      subject: 'Activate your account',
+      template: 'activation-mail',
+      context: {
+        activationCode,
+        user: {
+          name: registerDto.name,
+        },
+      },
+    });
+
+    return {
+      message: `Activation email sent to ${registerDto.email}`,
+      activationToken: token,
+    };
   }
 
   async createActivationToken(user: User): Promise<ICreateActivationToken> {
