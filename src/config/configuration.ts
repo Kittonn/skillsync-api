@@ -11,4 +11,6 @@ export default () => ({
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
+  nodeEnv: process.env.NODE_ENV,
+  allowedOrigins: process.env.ALLOWED_ORIGINS.split(','),
 });
