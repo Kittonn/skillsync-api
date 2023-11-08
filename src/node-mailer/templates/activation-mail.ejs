@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skillsync Activation Email</title>
+
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      min-width: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #fafafa;
+      color: #222;
+    }
+
+    a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.75;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+
+    table td {
+      vertical-align: top;
+    }
+
+    .email-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .email-header {
+      background-color: #0070f3;
+      padding: 24px;
+      color: #fff;
+    }
+
+    .email-body {
+      padding: 24px;
+      background-color: #fff;
+    }
+
+    .email-footer {
+      padding: 24px;
+      background-color: #f6f6f6;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #0070f3;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-wrapper">
+    <div class="email-header">
+      <h1>Welcome to Skillsync</h1>
+    </div>
+    <div class="email-body">
+      <p>Hi <%= user.name %>,</p>
+      <p>Thanks for signing up for Skillsync! We're excited to have you on board.</p>
+      <p>Before you can start using Skillsync, you need to confirm your email address.</p>
+      <p>Click the button below to confirm your email address:</p>
+      <h2>
+        <%= activationCode %>
+      </h2>
+      <p>If you didn't sign up for Skillsync, you can safely ignore this email.</p>
+      <p>Thanks,<br>The Skillsync Team</p>
+    </div>
+    <div class="email-footer">
+      <p>© 2020 Skillsync. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>

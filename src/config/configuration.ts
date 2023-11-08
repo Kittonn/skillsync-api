@@ -13,4 +13,18 @@ export default () => ({
   },
   nodeEnv: process.env.NODE_ENV,
   allowedOrigins: process.env.ALLOWED_ORIGINS.split(','),
+  activation: {
+    secret: process.env.ACTIVATION_SECRET,
+    expiresIn: process.env.ACTIVATION_EXPIRES_IN,
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  },
+  mailer: {
+    host: process.env.MAILER_HOST,
+    port: +process.env.MAILER_PORT,
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASS,
+  },
 });
