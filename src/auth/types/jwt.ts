@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface TokenPayload {
-  sub: Types.ObjectId | string;
+  sub: string;
 }
 
 export interface TokenConfig {

@@ -21,6 +21,7 @@ import { NodeMailerService } from '@/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
 import { TokenConfig, TokenPayload } from '@/auth/types/jwt';
+import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly nodeMailerService: NodeMailerService,
+    private readonly redisService: RedisService,
   ) {}
 
   private async createActivationToken(
@@ -134,7 +136,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: existUser._id };
+    const payload = { sub: existUser._id.toString() };
 
     const accessToken = await this.createToken(payload, {
       secret: this.configService.get('jwt.access.secret'),
@@ -145,6 +147,11 @@ export class AuthService {
       secret: this.configService.get('jwt.refresh.secret'),
       expiresIn: this.configService.get('jwt.refresh.expiresIn'),
     });
+
+    await this.redisService.set(
+      existUser._id.toString(),
+      JSON.stringify(existUser),
+    );
 
     return {
       accessToken,
