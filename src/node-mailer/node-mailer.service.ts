@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import * as path from 'path';
-import { EmailOptions } from '@/shared/types/email';
+import { EmailOptions } from '@/shared/types/node-mailer';
 
 @Injectable()
 export class NodeMailerService {
