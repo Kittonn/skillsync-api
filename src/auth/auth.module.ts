@@ -5,10 +5,11 @@ import { UsersModule } from '@/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { NodeMailerModule } from '@/node-mailer/node-mailer.module';
 import { RedisModule } from '@/database/redis/redis.module';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [UsersModule, JwtModule, NodeMailerModule, RedisModule],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

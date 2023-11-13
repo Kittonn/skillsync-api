@@ -9,12 +9,13 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User, UserDocument } from '@/users/schema/user.schema';
+import { User } from '@/users/schema/user.schema';
 import {
   IActivateUserResponse,
   IActivationPayload,
   ICreateActivationToken,
   ILoginResponse,
+  ILogoutResponse,
   IRegisterResponse,
 } from '@/auth/types/auth';
 import { NodeMailerService } from '@/node-mailer/node-mailer.service';
@@ -110,7 +111,7 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(user.password, salt);
 
-    const newUser = await this.usersService.create({
+    await this.usersService.create({
       ...user,
       password: hashedPassword,
     });
@@ -156,6 +157,13 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+    };
+  }
+
+  async logout(userId: string): Promise<ILogoutResponse> {
+    await this.redisService.del(userId);
+    return {
+      message: 'User logged out',
     };
   }
 }
