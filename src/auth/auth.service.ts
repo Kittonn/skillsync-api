@@ -21,7 +21,7 @@ import {
 import { NodeMailerService } from '@/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
-import { TokenConfig, TokenPayload } from '@/auth/types/jwt';
+import { JwtConfig, JwtPayload } from '@/auth/types/jwt';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
@@ -58,8 +58,8 @@ export class AuthService {
   }
 
   private async createToken(
-    payload: TokenPayload,
-    config: TokenConfig,
+    payload: JwtPayload,
+    config: JwtConfig,
   ): Promise<string> {
     return this.jwtService.sign(payload, config);
   }
@@ -148,7 +148,7 @@ export class AuthService {
       secret: this.configService.get('jwt.refresh.secret'),
       expiresIn: this.configService.get('jwt.refresh.expiresIn'),
     });
-
+    
     await this.redisService.set(
       existUser._id.toString(),
       JSON.stringify(existUser),

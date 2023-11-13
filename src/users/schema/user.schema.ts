@@ -1,3 +1,4 @@
+import { Role } from '@/auth/enums/role.enum';
 import { Course } from '@/courses/schema/course.schema';
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
@@ -21,8 +22,8 @@ export class User {
   @Prop(raw({ url: { type: String }, public_id: { type: String } }))
   avatar: Record<string, any>;
 
-  @Prop({ default: 'user' })
-  role: string;
+  @Prop({ default: Role.User })
+  role: Role;
 
   @Prop({ default: false })
   isVerified: boolean;

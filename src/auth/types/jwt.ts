@@ -1,8 +1,8 @@
-export interface TokenPayload {
+export interface JwtPayload {
   sub: string;
 }
 
-export interface TokenConfig {
+export interface JwtConfig {
   secret: string;
   expiresIn: string;
 }
