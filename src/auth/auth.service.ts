@@ -2,21 +2,25 @@ import {
   Injectable,
   ConflictException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@/users/schema/user.schema';
+import { User, UserDocument } from '@/users/schema/user.schema';
 import {
   IActivateUserResponse,
   IActivationPayload,
   ICreateActivationToken,
+  ILoginResponse,
   IRegisterResponse,
-} from '@/shared/types/auth';
+} from '@/auth/types/auth';
 import { NodeMailerService } from '@/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
+import { LoginDto } from './dto/login.dto';
+import { TokenConfig, TokenPayload } from '@/auth/types/jwt';
 
 @Injectable()
 export class AuthService {
@@ -50,6 +54,13 @@ export class AuthService {
     }) as IActivationPayload;
   }
 
+  private async createToken(
+    payload: TokenPayload,
+    config: TokenConfig,
+  ): Promise<string> {
+    return this.jwtService.sign(payload, config);
+  }
+
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
     const emailExists = await this.usersService.findOneByEmail(
       registerDto.email,
@@ -75,7 +86,6 @@ export class AuthService {
     });
 
     return {
-      message: `Activation email sent to ${registerDto.email}`,
       activationToken,
     };
   }
@@ -105,6 +115,40 @@ export class AuthService {
 
     return {
       message: 'User activated',
+    };
+  }
+
+  async login(loginDto: LoginDto): Promise<ILoginResponse> {
+    const existUser = await this.usersService.findOneByEmail(loginDto.email);
+
+    if (!existUser) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const isPasswordMatch = await bcrypt.compare(
+      loginDto.password,
+      existUser.password,
+    );
+
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { sub: existUser._id };
+
+    const accessToken = await this.createToken(payload, {
+      secret: this.configService.get('jwt.access.secret'),
+      expiresIn: this.configService.get('jwt.access.expiresIn'),
+    });
+
+    const refreshToken = await this.createToken(payload, {
+      secret: this.configService.get('jwt.refresh.secret'),
+      expiresIn: this.configService.get('jwt.refresh.expiresIn'),
+    });
+
+    return {
+      accessToken,
+      refreshToken,
     };
   }
 }

@@ -6,7 +6,6 @@ export interface ICreateActivationToken {
 }
 
 export interface IRegisterResponse {
-  message: string;
   activationToken: string;
 }
 
@@ -17,4 +16,9 @@ export interface IActivationPayload {
 
 export interface IActivateUserResponse {
   message: string;
+}
+
+export interface ILoginResponse {
+  accessToken: string;
+  refreshToken: string;
 }
