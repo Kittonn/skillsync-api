@@ -167,6 +167,10 @@ export class AuthService {
 
   async logout(userId: string): Promise<ILogoutResponse> {
     await this.redisService.del(userId);
+    await this.usersService.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
     return {
       message: 'User logged out',
     };
@@ -185,7 +189,7 @@ export class AuthService {
     const refreshToken = await hash(token.refreshToken);
 
     await this.redisService.set(userId, JSON.stringify(existUser));
-    
+
     await this.usersService.update({
       where: { id: userId },
       data: { refreshToken },
