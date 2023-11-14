@@ -1,20 +1,20 @@
-import { RedisService } from '@/database/redis/redis.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../types/jwt';
 import { User } from '@/users/schema/user.schema';
+import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'refresh-token') {
   constructor(
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('jwt.access.secret'),
+      secretOrKey: configService.get('jwt.refresh.secret'),
     });
   }
 

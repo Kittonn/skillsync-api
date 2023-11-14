@@ -57,12 +57,24 @@ export class AuthService {
     }) as IActivationPayload;
   }
 
-  private async createToken(
-    payload: JwtPayload,
-    config: JwtConfig,
-  ): Promise<string> {
-    return this.jwtService.sign(payload, config);
+  private async createToken(payload: JwtPayload) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.sign(payload, {
+        secret: this.configService.get('jwt.access.secret'),
+        expiresIn: this.configService.get('jwt.access.expiresIn'),
+      }),
+      this.jwtService.sign(payload, {
+        secret: this.configService.get('jwt.refresh.secret'),
+        expiresIn: this.configService.get('jwt.refresh.expiresIn'),
+      }),
+    ]);
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
+
+  
 
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
     const emailExists = await this.usersService.findOneByEmail(
@@ -137,27 +149,16 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: existUser._id.toString() };
-
-    const accessToken = await this.createToken(payload, {
-      secret: this.configService.get('jwt.access.secret'),
-      expiresIn: this.configService.get('jwt.access.expiresIn'),
-    });
-
-    const refreshToken = await this.createToken(payload, {
-      secret: this.configService.get('jwt.refresh.secret'),
-      expiresIn: this.configService.get('jwt.refresh.expiresIn'),
-    });
-    
     await this.redisService.set(
       existUser._id.toString(),
       JSON.stringify(existUser),
     );
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    const payload = { sub: existUser._id.toString(), role: existUser.role };
+
+    const token = await this.createToken(payload);
+
+    return token;
   }
 
   async logout(userId: string): Promise<ILogoutResponse> {
@@ -165,5 +166,18 @@ export class AuthService {
     return {
       message: 'User logged out',
     };
+  }
+
+  async refresh(userId: string) {
+    const existUser = JSON.parse(await this.redisService.get(userId));
+
+    if (!existUser) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { sub: userId, role: existUser.role };
+
+    const token = await this.createToken(payload);
+    return token;
   }
 }

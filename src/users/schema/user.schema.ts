@@ -35,6 +35,9 @@ export class User {
     default: [],
   })
   courses: Course[];
+
+  @Prop({ default: '' })
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
