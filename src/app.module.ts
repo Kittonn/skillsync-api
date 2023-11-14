@@ -3,10 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './users/users.module';
-import { CoursesModule } from './courses/courses.module';
-import { AuthModule } from './auth/auth.module';
-import { NodeMailerModule } from './node-mailer/node-mailer.module';
+import { UsersModule } from '@/modules/users/users.module';
+import { CoursesModule } from '@/modules/courses/courses.module';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { NodeMailerModule } from '@/modules/node-mailer/node-mailer.module';
 import configuration from '@/config/configuration';
 
 @Module({

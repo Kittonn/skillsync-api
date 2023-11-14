@@ -17,6 +17,7 @@ import { RedisService } from './redis.service';
           password: configService.get('redis.password'),
           tls: 120,
           ssl: true,
+          ttl: 0,
         }),
       inject: [ConfigService],
     }),

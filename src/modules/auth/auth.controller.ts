@@ -6,7 +6,7 @@ import {
   ILoginResponse,
   ILogoutResponse,
   IRegisterResponse,
-} from '@/auth/types/auth';
+} from '@/modules/auth/types/auth';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
 import { GetUser } from '@/common/decorators/get-user.decorator';
@@ -36,13 +36,13 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(AccessTokenGuard)
-  async logout(@GetUser('_id') userId: string): Promise<ILogoutResponse> {
+  async logout(@GetUser('id') userId: string): Promise<ILogoutResponse> {
     return this.authService.logout(userId);
   }
 
-  @Post('refresh')
   @UseGuards(RefreshTokenGuard)
-  async refresh(@GetUser('_id') userId: string) {
+  @Post('refresh')
+  async refresh(@GetUser('id') userId: string) {
     return this.authService.refresh(userId);
   }
 }
