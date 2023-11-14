@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
-import { UsersService } from '@/modules/users/users.service';
+import { UsersRepository } from '../users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
@@ -29,7 +29,7 @@ import { RedisService } from '@/database/redis/redis.service';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly nodeMailerService: NodeMailerService,
@@ -77,7 +77,7 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
-    const emailExists = await this.usersService.findOne({
+    const emailExists = await this.usersRepository.findOne({
       email: registerDto.email,
     });
 
@@ -114,7 +114,7 @@ export class AuthService {
       throw new BadRequestException('Invalid activation code');
     }
 
-    const existUser = await this.usersService.findOne({ email: user.email });
+    const existUser = await this.usersRepository.findOne({ email: user.email });
 
     if (existUser) {
       throw new ConflictException('Email already exists');
@@ -122,7 +122,7 @@ export class AuthService {
 
     const hashedPassword = await hash(user.password);
 
-    await this.usersService.create({
+    await this.usersRepository.create({
       ...user,
       password: hashedPassword,
     });
@@ -133,7 +133,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<ILoginResponse> {
-    const existUser = await this.usersService.findOne({
+    const existUser = await this.usersRepository.findOne({
       email: loginDto.email,
     });
 
@@ -155,7 +155,7 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    const updatedUser = await this.usersService.update({
+    const updatedUser = await this.usersRepository.update({
       where: { id: existUser.id },
       data: { refreshToken },
     });
@@ -167,7 +167,7 @@ export class AuthService {
 
   async logout(userId: string): Promise<ILogoutResponse> {
     await this.redisService.del(userId);
-    await this.usersService.update({
+    await this.usersRepository.update({
       where: { id: userId },
       data: { refreshToken: null },
     });
@@ -190,7 +190,7 @@ export class AuthService {
 
     await this.redisService.set(userId, JSON.stringify(existUser));
 
-    await this.usersService.update({
+    await this.usersRepository.update({
       where: { id: userId },
       data: { refreshToken },
     });
