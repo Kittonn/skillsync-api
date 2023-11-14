@@ -4,7 +4,9 @@ export default () => ({
     uri: process.env.MONGO_URI,
   },
   redis: {
-    uri: process.env.REDIS_URI,
+    host: process.env.REDIS_HOST,
+    port: +process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
   },
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,

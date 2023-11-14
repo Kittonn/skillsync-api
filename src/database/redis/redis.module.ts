@@ -12,7 +12,11 @@ import { RedisService } from './redis.service';
       useFactory: async (configService: ConfigService) =>
         ({
           store: redisStore,
-          url: configService.get<string>('redis.uri'),
+          host: configService.get('redis.host'),
+          port: configService.get('redis.port'),
+          password: configService.get('redis.password'),
+          tls: 120,
+          ssl: true,
         }) as unknown as CacheStore,
       inject: [ConfigService],
     }),

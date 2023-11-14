@@ -3,6 +3,7 @@ import {
   ConflictException,
   BadRequestException,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
@@ -21,7 +22,7 @@ import {
 import { NodeMailerService } from '@/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtConfig, JwtPayload } from '@/auth/types/jwt';
+import { JwtPayload } from '@/auth/types/jwt';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
@@ -73,8 +74,6 @@ export class AuthService {
       refreshToken,
     };
   }
-
-  
 
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
     const emailExists = await this.usersService.findOneByEmail(
