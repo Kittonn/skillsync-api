@@ -10,7 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@/users/schema/user.schema';
+import { User } from '@prisma/client';
 import {
   IActivateUserResponse,
   IActivationPayload,
@@ -76,9 +76,9 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
-    const emailExists = await this.usersService.findOneByEmail(
-      registerDto.email,
-    );
+    const emailExists = await this.usersService.findOne({
+      email: registerDto.email,
+    });
 
     if (emailExists) {
       throw new ConflictException('Email already exists');
@@ -113,7 +113,7 @@ export class AuthService {
       throw new BadRequestException('Invalid activation code');
     }
 
-    const existUser = await this.usersService.findOneByEmail(user.email);
+    const existUser = await this.usersService.findOne({ email: user.email });
 
     if (existUser) {
       throw new ConflictException('Email already exists');
@@ -133,7 +133,9 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<ILoginResponse> {
-    const existUser = await this.usersService.findOneByEmail(loginDto.email);
+    const existUser = await this.usersService.findOne({
+      email: loginDto.email,
+    });
 
     if (!existUser) {
       throw new BadRequestException('Invalid credentials');
@@ -148,12 +150,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    await this.redisService.set(
-      existUser._id.toString(),
-      JSON.stringify(existUser),
-    );
+    await this.redisService.set(existUser.id, JSON.stringify(existUser));
 
-    const payload = { sub: existUser._id.toString(), role: existUser.role };
+    const payload = { sub: existUser.id, role: existUser.role };
 
     const token = await this.createToken(payload);
 

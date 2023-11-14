@@ -10,7 +10,6 @@ import {
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
 import { GetUser } from '@/common/decorators/get-user.decorator';
-import { UserDocument } from '@/users/schema/user.schema';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { RefreshTokenGuard } from '@/common/guards/refresh-token.guard';
 

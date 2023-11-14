@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MongoModule } from './mongo/mongo.module';
 import { RedisModule } from './redis/redis.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [MongoModule, RedisModule, CloudinaryModule],
+  imports: [RedisModule, CloudinaryModule, PrismaModule],
   controllers: [],
   providers: [],
 })

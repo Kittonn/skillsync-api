@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../types/jwt';
-import { User } from '@/users/schema/user.schema';
+import { User } from '@prisma/client';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()

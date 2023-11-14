@@ -1,4 +1,4 @@
-import { User } from '@/users/schema/user.schema';
+import { User } from '@prisma/client';
 
 export interface ICreateActivationToken {
   activationToken: string;
