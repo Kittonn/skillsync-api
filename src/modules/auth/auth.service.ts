@@ -7,10 +7,11 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
-import { UsersService } from '@/users/users.service';
+import { UsersService } from '@/modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
+import { hash } from '@/shared/utils/hash';
 import {
   IActivateUserResponse,
   IActivationPayload,
@@ -18,11 +19,11 @@ import {
   ILoginResponse,
   ILogoutResponse,
   IRegisterResponse,
-} from '@/auth/types/auth';
-import { NodeMailerService } from '@/node-mailer/node-mailer.service';
+} from '@/modules/auth/types/auth';
+import { NodeMailerService } from '@/modules/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtPayload } from '@/auth/types/jwt';
+import { JwtPayload } from '@/modules/auth/types/jwt';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
@@ -119,8 +120,7 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(user.password, salt);
+    const hashedPassword = await hash(user.password);
 
     await this.usersService.create({
       ...user,
@@ -150,11 +150,17 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    await this.redisService.set(existUser.id, JSON.stringify(existUser));
-
     const payload = { sub: existUser.id, role: existUser.role };
-
     const token = await this.createToken(payload);
+
+    const refreshToken = await hash(token.refreshToken);
+
+    const updatedUser = await this.usersService.update({
+      where: { id: existUser.id },
+      data: { refreshToken },
+    });
+
+    await this.redisService.set(existUser.id, JSON.stringify(updatedUser));
 
     return token;
   }
@@ -174,8 +180,17 @@ export class AuthService {
     }
 
     const payload = { sub: userId, role: existUser.role };
-
     const token = await this.createToken(payload);
+
+    const refreshToken = await hash(token.refreshToken);
+
+    await this.redisService.set(userId, JSON.stringify(existUser));
+    
+    await this.usersService.update({
+      where: { id: userId },
+      data: { refreshToken },
+    });
+
     return token;
   }
 }

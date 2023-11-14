@@ -6,7 +6,7 @@ import {
   ILoginResponse,
   ILogoutResponse,
   IRegisterResponse,
-} from '@/auth/types/auth';
+} from '@/modules/auth/types/auth';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
 import { GetUser } from '@/common/decorators/get-user.decorator';
