@@ -5,7 +5,6 @@ import { UsersModule } from '@/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { NodeMailerModule } from '@/node-mailer/node-mailer.module';
 import { RedisModule } from '@/database/redis/redis.module';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 
@@ -14,7 +13,6 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
   controllers: [AuthController],
   providers: [
     AuthService,
-    JwtStrategy,
     AccessTokenStrategy,
     RefreshTokenStrategy,
   ],
