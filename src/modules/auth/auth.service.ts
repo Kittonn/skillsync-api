@@ -3,7 +3,6 @@ import {
   ConflictException,
   BadRequestException,
   UnauthorizedException,
-  Inject,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';

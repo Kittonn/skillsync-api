@@ -1,8 +1,12 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Put,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -12,6 +16,8 @@ import { GetUser } from '@/common/decorators/get-user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileValidationPipe } from '@/common/pipes/file-validation.pipe';
 
 @Controller('users')
 @UseGuards(AccessTokenGuard)
@@ -37,5 +43,20 @@ export class UsersController {
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<User> {
     return this.usersService.updatePassword(user, changePasswordDto);
+  }
+
+  @Put('/change-avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateAvatar(
+    @UploadedFile(
+      new FileValidationPipe({
+        maxSize: 10 * 1024 * 1024,
+        fileType: /^image\/(png|jpeg|jpg|webp)$/,
+      }),
+    )
+    file: Express.Multer.File,
+    @GetUser('id') userId: string,
+  ): Promise<string> {
+    return 'update avatar';
   }
 }

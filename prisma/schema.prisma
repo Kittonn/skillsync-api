@@ -9,19 +9,28 @@ datasource db {
 
 model User {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  v Int @default(0) @map("__v") @ignore
+  v            Int      @default(0) @map("__v") @ignore
   name         String
   email        String   @unique
   password     String
-  avatar       String?
-  role         Role     @default(USER)
   isVerified   Boolean  @default(false)
   refreshToken String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  avatar       Avatar?  @relation(fields: [avatarId], references: [id])
+  avatarId     String?  @unique @map("avatar_id") @db.ObjectId
+
+  role Role @default(USER)
+}
+
+model Avatar {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  public_id String
+  url       String
+  User      User?
 }
 
 enum Role {
-  USER 
-  ADMIN 
+  USER
+  ADMIN
 }
