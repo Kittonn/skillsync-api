@@ -1,31 +1,102 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
-import { FindAllUsersParams, UpdateUserParams } from './types/user';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { RedisService } from '@/database/redis/redis.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { User } from '@prisma/client';
+import { compare, hash } from '@/shared/utils/encrypt';
+import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly redisService: RedisService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+  async getUserInfo(userId: string): Promise<User> {
+    const user = JSON.parse(await this.redisService.get(userId));
+
+    const { password, refreshToken, ...userInfo } = user;
+
+    return userInfo as User;
   }
 
-  async findAll(params: FindAllUsersParams): Promise<User[]> {
-    return this.prisma.user.findMany({ ...params });
+  async updateUserInfo(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.usersRepository.update({
+      where: { id: userId },
+      data: updateUserDto,
+    });
+
+    await this.redisService.set(userId, JSON.stringify(user));
+
+    const { password, refreshToken, ...userInfo } = user;
+    return userInfo as User;
   }
 
-  async findOne(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: userWhereUniqueInput });
+  async updatePassword(user: User, changePasswordDto: ChangePasswordDto) {
+    const isPasswordMatch = await compare(
+      changePasswordDto.oldPassword,
+      user.password,
+    );
+
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const hashedPassword = await hash(changePasswordDto.newPassword);
+
+    const updatedUser = await this.usersRepository.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    await this.redisService.set(user.id, JSON.stringify(updatedUser));
+
+    const { password, refreshToken, ...userInfo } = updatedUser;
+    return userInfo as User;
   }
 
-  async update(params: UpdateUserParams): Promise<User> {
-    return this.prisma.user.update({ ...params });
-  }
+  async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      id: userId,
+    });
 
-  async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({ where });
+    const uploadedFile = await this.cloudinaryService.uploadFile(file);
+    const avatarData = {
+      publicId: uploadedFile.public_id,
+      url: uploadedFile.secure_url,
+    };
+
+    let updatedUser;
+
+    if (user.avatar?.publicId) {
+      await this.cloudinaryService.deleteFile(user.avatar.publicId);
+      updatedUser = await this.usersRepository.update({
+        where: { id: userId },
+        data: {
+          avatar: {
+            update: avatarData,
+          },
+        },
+      });
+    } else {
+      updatedUser = await this.usersRepository.update({
+        where: { id: userId },
+        data: {
+          avatar: {
+            create: avatarData,
+          },
+        },
+      });
+    }
+
+    await this.redisService.set(userId, JSON.stringify(updatedUser));
+    const { password, refreshToken, ...userInfo } = updatedUser;
+    return userInfo as User;
   }
 }

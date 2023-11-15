@@ -2,12 +2,15 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from '../types/jwt';
+import { JwtPayload } from '../../../shared/interfaces/jwt';
 import { User } from '@prisma/client';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, 'access-token') {
+export class AccessTokenStrategy extends PassportStrategy(
+  Strategy,
+  'access-token',
+) {
   constructor(
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
@@ -18,7 +21,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'access-toke
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User> {    
+  async validate(payload: JwtPayload): Promise<User> {
     const user = await this.redisService.get(payload.sub);
 
     if (!user) {

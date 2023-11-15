@@ -23,7 +23,7 @@ import * as path from 'path';
           from: `"No Reply" <${configService.get('mailer.user')}>`,
         },
         template: {
-          dir: path.join(__dirname, '../../templates'),
+          dir: path.join(__dirname, '../../../templates'),
           adapter: new EjsAdapter(),
           options: {
             strict: false,

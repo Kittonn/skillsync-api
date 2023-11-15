@@ -26,3 +26,13 @@ export interface ILoginResponse {
 export interface ILogoutResponse {
   message: string;
 }
+
+export interface ICreateToken {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface IRefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}
