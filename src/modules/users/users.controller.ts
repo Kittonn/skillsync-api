@@ -57,6 +57,6 @@ export class UsersController {
     file: Express.Multer.File,
     @GetUser('id') userId: string,
   ): Promise<string> {
-    return 'update avatar';
+    return this.usersService.updateAvatar(file, userId);
   }
 }

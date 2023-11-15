@@ -5,12 +5,14 @@ import { RedisService } from '@/database/redis/redis.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from '@prisma/client';
 import { compare, hash } from '@/shared/utils/encrypt';
+import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly redisService: RedisService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async getUserInfo(userId: string): Promise<User> {
@@ -57,5 +59,18 @@ export class UsersService {
 
     const { password, refreshToken, ...userInfo } = updatedUser;
     return userInfo as User;
+  }
+
+  async updateAvatar(file: Express.Multer.File, userId: string) {
+    const user = await this.usersRepository.findOne({
+      id: userId,
+    });
+
+    const uploadedFile = await this.cloudinaryService.uploadFile(file);
+
+    console.log(uploadedFile);
+
+
+    return 'update avatar';
   }
 }
