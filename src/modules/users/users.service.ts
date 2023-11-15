@@ -61,16 +61,42 @@ export class UsersService {
     return userInfo as User;
   }
 
-  async updateAvatar(file: Express.Multer.File, userId: string) {
+  async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       id: userId,
     });
 
     const uploadedFile = await this.cloudinaryService.uploadFile(file);
+    const avatarData = {
+      publicId: uploadedFile.public_id,
+      url: uploadedFile.secure_url,
+    };
 
-    console.log(uploadedFile);
+    let updatedUser;
 
+    if (user.avatar?.publicId) {
+      await this.cloudinaryService.deleteFile(user.avatar.publicId);
+      updatedUser = await this.usersRepository.update({
+        where: { id: userId },
+        data: {
+          avatar: {
+            update: avatarData,
+          },
+        },
+      });
+    } else {
+      updatedUser = await this.usersRepository.update({
+        where: { id: userId },
+        data: {
+          avatar: {
+            create: avatarData,
+          },
+        },
+      });
+    }
 
-    return 'update avatar';
+    await this.redisService.set(userId, JSON.stringify(updatedUser));
+    const { password, refreshToken, ...userInfo } = updatedUser;
+    return userInfo as User;
   }
 }

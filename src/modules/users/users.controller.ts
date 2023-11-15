@@ -1,10 +1,7 @@
 import {
   Body,
   Controller,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
-  ParseFilePipe,
   Put,
   UploadedFile,
   UseGuards,
@@ -56,7 +53,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
     @GetUser('id') userId: string,
-  ): Promise<string> {
+  ): Promise<User> {
     return this.usersService.updateAvatar(file, userId);
   }
 }

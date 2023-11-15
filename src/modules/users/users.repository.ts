@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
-import { FindAllUsersParams, UpdateUserParams } from '../../shared/interfaces/user';
+import {
+  FindAllUsersParams,
+  UpdateUserParams,
+  UserIncludeFields,
+  includeFields,
+} from '../../shared/interfaces/user';
 
 @Injectable()
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
-
-  async exclude<User, Key extends keyof User>(
-    user: User,
-    keys: Key[],
-  ): Promise<Omit<User, Key>> {
-    return Object.fromEntries(
-      Object.entries(user).filter(([key]) => !keys.includes(key as Key)),
-    ) as Omit<User, Key>;
-  }
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
@@ -26,15 +22,18 @@ export class UsersRepository {
 
   async findOne(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+  ): Promise<UserIncludeFields | null> {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
-      
+      include: includeFields,
     });
   }
 
   async update(params: UpdateUserParams): Promise<User> {
-    return this.prisma.user.update({ ...params });
+    return this.prisma.user.update({
+      ...params,
+      include: includeFields,
+    });
   }
 
   async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {

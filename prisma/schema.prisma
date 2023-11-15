@@ -24,10 +24,10 @@ model User {
 }
 
 model Avatar {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
   publicId String
-  url       String
-  User      User?
+  url      String
+  User     User?
 }
 
 enum Role {
