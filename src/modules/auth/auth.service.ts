@@ -10,7 +10,7 @@ import { UsersRepository } from '../users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
-import { hash } from '@/shared/utils/hash';
+import { hash } from '@/shared/utils/encrypt';
 import {
   IActivateUserResponse,
   IActivationPayload,
@@ -20,11 +20,11 @@ import {
   ILogoutResponse,
   IRefreshTokenResponse,
   IRegisterResponse,
-} from '@/modules/auth/types/auth';
+} from '@/shared/interfaces/auth';
 import { NodeMailerService } from '@/modules/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtPayload } from '@/modules/auth/types/jwt';
+import { JwtPayload } from '@/shared/interfaces/jwt';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()

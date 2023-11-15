@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RedisService } from '@/database/redis/redis.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from '@prisma/client';
-import { compare, hash } from '@/shared/utils/hash';
+import { compare, hash } from '@/shared/utils/encrypt';
 
 @Injectable()
 export class UsersService {
