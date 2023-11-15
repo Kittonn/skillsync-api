@@ -188,12 +188,12 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    await this.redisService.set(userId, JSON.stringify(existUser));
-
-    await this.usersRepository.update({
+    const updatedUser = await this.usersRepository.update({
       where: { id: userId },
       data: { refreshToken },
     });
+
+    await this.redisService.set(userId, JSON.stringify(updatedUser));
 
     return token;
   }
