@@ -13,13 +13,18 @@ export class UsersService {
     private readonly redisService: RedisService,
   ) {}
 
-  async getUserInfo(userId: string) {
+  async getUserInfo(userId: string): Promise<User> {
     const user = JSON.parse(await this.redisService.get(userId));
 
-    return this.usersRepository.exclude(user, ['refreshToken', 'password']);
+    const { password, refreshToken, ...userInfo } = user;
+
+    return userInfo as User;
   }
 
-  async updateUserInfo(userId: string, updateUserDto: UpdateUserDto) {
+  async updateUserInfo(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     const user = await this.usersRepository.update({
       where: { id: userId },
       data: updateUserDto,
@@ -27,7 +32,8 @@ export class UsersService {
 
     await this.redisService.set(userId, JSON.stringify(user));
 
-    return this.usersRepository.exclude(user, ['refreshToken', 'password']);
+    const { password, refreshToken, ...userInfo } = user;
+    return userInfo as User;
   }
 
   async updatePassword(user: User, changePasswordDto: ChangePasswordDto) {
@@ -49,9 +55,7 @@ export class UsersService {
 
     await this.redisService.set(user.id, JSON.stringify(updatedUser));
 
-    return this.usersRepository.exclude(updatedUser, [
-      'refreshToken',
-      'password',
-    ]);
+    const { password, refreshToken, ...userInfo } = updatedUser;
+    return userInfo as User;
   }
 }

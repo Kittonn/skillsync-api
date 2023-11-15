@@ -16,8 +16,10 @@ import {
   IActivateUserResponse,
   IActivationPayload,
   ICreateActivationToken,
+  ICreateToken,
   ILoginResponse,
   ILogoutResponse,
+  IRefreshTokenResponse,
   IRegisterResponse,
 } from '@/modules/auth/types/auth';
 import { NodeMailerService } from '@/modules/node-mailer/node-mailer.service';
@@ -59,7 +61,7 @@ export class AuthService {
     }) as IActivationPayload;
   }
 
-  private async createToken(payload: JwtPayload) {
+  private async createToken(payload: JwtPayload): Promise<ICreateToken> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.sign(payload, {
         secret: this.configService.get('jwt.access.secret'),
@@ -176,7 +178,7 @@ export class AuthService {
     };
   }
 
-  async refresh(userId: string) {
+  async refresh(userId: string): Promise<IRefreshTokenResponse> {
     const existUser = JSON.parse(await this.redisService.get(userId));
 
     if (!existUser) {
