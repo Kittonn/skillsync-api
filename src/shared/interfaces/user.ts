@@ -12,11 +12,3 @@ export interface UpdateUserParams {
   where: Prisma.UserWhereUniqueInput;
   data: Prisma.UserUpdateInput;
 }
-
-export const includeFields = {
-  avatar: true,
-} satisfies Prisma.UserInclude;
-
-export type UserIncludeFields = Prisma.UserGetPayload<{
-  include: typeof includeFields;
-}>;

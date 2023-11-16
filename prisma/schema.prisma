@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+type Avatar {
+  publicId String
+  url      String
+}
+
 model User {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   name         String
@@ -14,149 +30,10 @@ model User {
   password     String
   isVerified   Boolean @default(false)
   refreshToken String?
-  avatar       Avatar? @relation(fields: [avatarId], references: [id])
-  avatarId     String? @unique @map("avatar_id") @db.ObjectId
-
-  reviews  Review[]
-  comments Comment[]
-  reply    Reply[]
+  avatar       Avatar?
 
   role Role @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Avatar {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  publicId String
-  url      String
-  User     User?
-}
-
-model Course {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  description    String
-  price          Float
-  estimatedPrice Float
-  Thumbnail      Thumbnail?     @relation(fields: [thumbnailId], references: [id])
-  thumbnailId    String?        @unique @map("thumbnail_id") @db.ObjectId
-  tags           String
-  level          String
-  demoUrl        String
-  rating         Int            @default(0)
-  purchased      Int            @default(0)
-  benefits       Benefit[]
-  prerequisites  Prerequisite[]
-  reviews        Review[]
-  courseDetails  CourseDetail[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Benefit {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-
-  course   Course? @relation(fields: [courseId], references: [id])
-  courseId String? @unique @map("course_id") @db.ObjectId
-}
-
-model Prerequisite {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-
-  course   Course? @relation(fields: [courseId], references: [id])
-  courseId String? @unique @map("course_id") @db.ObjectId
-}
-
-model Review {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  rating  Int    @default(0)
-  comment String
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String @map("user_id") @db.ObjectId
-
-  course   Course? @relation(fields: [courseId], references: [id])
-  courseId String? @unique @map("course_id") @db.ObjectId
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Link {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  url   String
-
-  courseDetail   CourseDetail? @relation(fields: [courseDetailId], references: [id])
-  courseDetailId String?       @unique @map("course_detail_id") @db.ObjectId
-}
-
-model Comment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  comment String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @map("user_id") @db.ObjectId
-
-  courseDetail   CourseDetail? @relation(fields: [courseDetailId], references: [id])
-  courseDetailId String?       @unique @map("course_detail_id") @db.ObjectId
-
-  replies Reply[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Reply {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  message String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @map("user_id") @db.ObjectId
-
-  commentId String  @map("comment_id") @db.ObjectId
-  comment   Comment @relation(fields: [commentId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model CourseDetail {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  videoUrl     String
-  title        String
-  videoSection String
-  description  String
-  videoLength  Int
-  videoPlayer  String
-  links        Link[]
-  suggestion   String
-  questions    Comment[]
-
-  videoThumbnail   Thumbnail? @relation(fields: [videoThumbnailId], references: [id])
-  videoThumbnailId String?    @unique @map("video_thumbnails_id") @db.ObjectId
-
-  course   Course? @relation(fields: [courseId], references: [id])
-  courseId String? @unique @map("course_id") @db.ObjectId
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Thumbnail {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  publicId String
-  url      String
-
-  Course       Course?
-  CourseDetail CourseDetail?
-}
-
-enum Role {
-  USER
-  ADMIN
 }

@@ -38,7 +38,10 @@ export class UsersService {
     return userInfo as User;
   }
 
-  async updatePassword(user: User, changePasswordDto: ChangePasswordDto) {
+  async updatePassword(
+    user: User,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
     const isPasswordMatch = await compare(
       changePasswordDto.oldPassword,
       user.password,
@@ -62,9 +65,7 @@ export class UsersService {
   }
 
   async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      id: userId,
-    });
+    const user = await this.usersRepository.findOne({ id: userId });
 
     const uploadedFile = await this.cloudinaryService.uploadFile(file);
     const avatarData = {
@@ -72,28 +73,14 @@ export class UsersService {
       url: uploadedFile.secure_url,
     };
 
-    let updatedUser;
-
     if (user.avatar?.publicId) {
       await this.cloudinaryService.deleteFile(user.avatar.publicId);
-      updatedUser = await this.usersRepository.update({
-        where: { id: userId },
-        data: {
-          avatar: {
-            update: avatarData,
-          },
-        },
-      });
-    } else {
-      updatedUser = await this.usersRepository.update({
-        where: { id: userId },
-        data: {
-          avatar: {
-            create: avatarData,
-          },
-        },
-      });
     }
+
+    const updatedUser = await this.usersRepository.update({
+      where: { id: userId },
+      data: { avatar: avatarData },
+    });
 
     await this.redisService.set(userId, JSON.stringify(updatedUser));
     const { password, refreshToken, ...userInfo } = updatedUser;
