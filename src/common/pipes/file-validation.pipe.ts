@@ -16,14 +16,13 @@ export class FileValidationPipe implements PipeTransform {
     file: Express.Multer.File,
     metadate: ArgumentMetadata,
   ): Express.Multer.File {
-    if (!file) {
-      throw new BadRequestException('File is required');
+    if (file) {
+      this.validateFileSize(file);
+      this.validateFileType(file);
+      return file;
+    } else {
+      return null;
     }
-
-    this.validateFileSize(file);
-    this.validateFileType(file);
-
-    return file;
   }
 
   private validateFileSize(file: Express.Multer.File): void {

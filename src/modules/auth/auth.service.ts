@@ -78,13 +78,13 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<IRegisterResponse> {
-    const emailExists = await this.usersRepository.findOne({
-      email: registerDto.email,
-    });
+    // const emailExists = await this.usersRepository.findOne({
+    //   email: registerDto.email,
+    // });
 
-    if (emailExists) {
-      throw new ConflictException('Email already exists');
-    }
+    // if (emailExists) {
+    //   throw new ConflictException('Email already exists');
+    // }
 
     const { activationToken, activationCode } =
       await this.createActivationToken(registerDto as User);
@@ -115,11 +115,11 @@ export class AuthService {
       throw new BadRequestException('Invalid activation code');
     }
 
-    const existUser = await this.usersRepository.findOne({ email: user.email });
+    // const existUser = await this.usersRepository.findOne({ email: user.email });
 
-    if (existUser) {
-      throw new ConflictException('Email already exists');
-    }
+    // if (existUser) {
+    //   throw new ConflictException('Email already exists');
+    // }
 
     const hashedPassword = await hash(user.password);
 

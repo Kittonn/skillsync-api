@@ -12,8 +12,3 @@ export interface UpdateCourseParams {
   where: Prisma.CourseWhereUniqueInput;
   data: Prisma.CourseUpdateInput;
 }
-
-export interface CourseDetail
-  extends Prisma.CourseDetailCreateManyCourseInput {
-  links: Prisma.LinkCreateManyCourseDetailInput[];
-}

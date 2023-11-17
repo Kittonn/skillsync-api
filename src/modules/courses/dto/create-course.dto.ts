@@ -1,7 +1,6 @@
-import { Benefit, Level, Prerequisite } from '@prisma/client';
+import { Benefit, Level, Prerequisite, CourseDetail } from '@prisma/client';
 import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { CourseDetail } from '@/shared/interfaces/course';
 
 export class CreateCourseDto {
   @IsString()
