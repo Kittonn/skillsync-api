@@ -96,7 +96,6 @@ model Comment {
 model CourseDetail {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
   videoUrl       String
-  videoThumbnail Thumbnail?
   title          String
   videoSection   String
   description    String
@@ -113,7 +112,7 @@ model CourseDetail {
 
 model Course {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
+  name           String         @unique
   description    String
   price          Int
   estimatedPrice Int
@@ -126,7 +125,7 @@ model Course {
   reviews        Review[]
   rating         Int            @default(0)
   purchased      Int            @default(0)
-  courseDetail CourseDetail[]
+  courseDetails CourseDetail[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
