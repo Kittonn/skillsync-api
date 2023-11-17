@@ -4,9 +4,7 @@ import { User, Prisma } from '@prisma/client';
 import {
   FindAllUsersParams,
   UpdateUserParams,
-  UserIncludeFields,
-  includeFields,
-} from '../../shared/interfaces/user';
+} from '@/shared/interfaces/user';
 
 @Injectable()
 export class UsersRepository {
@@ -22,18 +20,12 @@ export class UsersRepository {
 
   async findOne(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<UserIncludeFields | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-      include: includeFields,
-    });
+  ): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: userWhereUniqueInput });
   }
 
   async update(params: UpdateUserParams): Promise<User> {
-    return this.prisma.user.update({
-      ...params,
-      include: includeFields,
-    });
+    return this.prisma.user.update({ ...params });
   }
 
   async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
