@@ -23,6 +23,19 @@ type Avatar {
   url      String
 }
 
+type Thumbnail {
+  publicId String
+  url      String
+}
+
+type Benefit {
+  title String
+}
+
+type Prerequisite {
+  title String
+}
+
 model User {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   name         String
@@ -31,9 +44,91 @@ model User {
   isVerified   Boolean @default(false)
   refreshToken String?
   avatar       Avatar?
-
-  role Role @default(USER)
-
+  role         Role    @default(USER)
+  reviews  Review[]
+  comments Comment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Review {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  commentReplies Comment[]
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
+}
+
+model Link {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  url   String
+  courseDetail   CourseDetail @relation(fields: [courseDetailId], references: [id])
+  courseDetailId String       @db.ObjectId
+
+  @@map("links")
+}
+
+model Comment {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  review   Review? @relation(fields: [reviewId], references: [id])
+  reviewId String? @db.ObjectId
+  comment        Comment?  @relation("RepliesComment", fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  commentId      String?   @db.ObjectId
+  commentReplies Comment[] @relation("RepliesComment")
+  courseDetail   CourseDetail? @relation(fields: [courseDetailId], references: [id])
+  courseDetailId String?       @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+model CourseDetail {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  videoUrl       String
+  videoThumbnail Thumbnail?
+  title          String
+  videoSection   String
+  description    String
+  videoLength    Int
+  videoPlayer    String
+  links          Link[]
+  suggestion     String
+  questions      Comment[]
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String @db.ObjectId
+
+  @@map("courseDetails")
+}
+
+model Course {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String
+  price          Int
+  estimatedPrice Int
+  thumbnail      Thumbnail?
+  tags           String
+  level          Level
+  demoUrl        String
+  benefits       Benefit[]
+  prerequisites  Prerequisite[]
+  reviews        Review[]
+  rating         Int            @default(0)
+  purchased      Int            @default(0)
+  courseDetail CourseDetail[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("courses")
 }
