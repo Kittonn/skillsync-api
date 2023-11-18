@@ -9,6 +9,7 @@ import { CreateLayoutDto } from './dto/create-layout.dto';
 import { LayoutsRepository } from './layouts.repository';
 import { Type } from '@prisma/client';
 import { UpdateLayoutDto } from './dto/update-layout.dto';
+import { GetLayoutDto } from './dto/get-layout.dto';
 
 @Injectable()
 export class LayoutsService {
@@ -16,6 +17,18 @@ export class LayoutsService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly layoutsRepository: LayoutsRepository,
   ) {}
+
+  async getLayoutByType(getLayoutDto: GetLayoutDto) {
+    const layout = await this.layoutsRepository.findOne({
+      type: getLayoutDto.type,
+    });
+
+    if (!layout) {
+      throw new NotFoundException();
+    }
+
+    return layout;
+  }
 
   async createLayout(
     file: Express.Multer.File,
