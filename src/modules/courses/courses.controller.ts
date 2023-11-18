@@ -19,8 +19,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Controller('courses')
-// @UseGuards(AccessTokenGuard, RolesGuard)
-// @Roles(Role.ADMIN)
+@UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(Role.ADMIN)
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
