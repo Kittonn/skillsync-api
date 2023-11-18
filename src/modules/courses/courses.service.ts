@@ -7,7 +7,7 @@ import { CoursesRepository } from './courses.repository';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { Course } from '@prisma/client';
+import { Course, Prisma } from '@prisma/client';
 
 @Injectable()
 export class CoursesService {
@@ -20,10 +20,31 @@ export class CoursesService {
     createCourseDto: CreateCourseDto,
     file: Express.Multer.File,
   ) {
-    return {
-      createCourseDto,
-      file,
-    };
+    const course = await this.coursesRepository.findOne({
+      name: createCourseDto.name,
+    });
+
+    if (course) {
+      throw new ConflictException();
+    }
+
+    let uploadedFile;
+
+    if (file) {
+      uploadedFile = await this.cloudinaryService.uploadFile(file);
+    }
+
+    const createdCourse = await this.coursesRepository.create({
+      ...createCourseDto,
+      ...(uploadedFile && {
+        thumbnail: {
+          url: uploadedFile.secure_url,
+          publicId: uploadedFile.public_id,
+        },
+      }),
+    } as Prisma.CourseCreateInput);
+
+    return createdCourse;
   }
 
   async updateCourse(
@@ -31,57 +52,41 @@ export class CoursesService {
     updateCourseDto: UpdateCourseDto,
     file: Express.Multer.File,
   ): Promise<Course> {
-    const course = (await this.coursesRepository.findOne({
+    const course = await this.coursesRepository.findOne({
       id: courseId,
-    })) as any;
+    });
 
-    console.log(course);
+    if (!course) {
+      throw new NotFoundException();
+    }
 
-    console.log(course.courseDetails[0].links);
+    const courseWithSameName = await this.coursesRepository.findOne({
+      name: updateCourseDto.name,
+    });
 
-    // if (!course) {
-    //   throw new NotFoundException(`Course with id ${courseId} not found`);
-    // }
+    if (courseWithSameName && courseWithSameName.id !== course.id) {
+      throw new ConflictException();
+    }
 
-    // const uploadedFile = await this.cloudinaryService.uploadFile(file);
+    const uploadedFile = await this.cloudinaryService.uploadFile(file);
 
-    // if (course.thumbnail?.publicId) {
-    //   await this.cloudinaryService.deleteFile(course.thumbnail.publicId);
-    // }
+    if (course.thumbnail?.publicId) {
+      await this.cloudinaryService.deleteFile(course.thumbnail.publicId);
+    }
 
-    // const updatedCourse = await this.coursesRepository.update({
-    //   where: {
-    //     id: courseId,
-    //   },
-    //   data: {
-    //     ...updateCourseDto,
-    //     courseDetails: {
-    //       update: updateCourseDto.courseDetails.map((courseDetail) => ({
-    //         where: {
-    //           id: course.courseDetail.id,
-    //         },
-    //         data: {
-    //           ...courseDetail,
-    //           links: {
-    //             update: courseDetail.links.map((link) => ({
-    //               where: {
-    //                 id: link.id,
-    //               },
-    //               data: link,
-    //             })),
-    //           },
-    //         },
-    //       })),
-    //     },
-    //     ...(uploadedFile && {
-    //       thumbnail: {
-    //         url: uploadedFile.secure_url,
-    //         publicId: uploadedFile.public_id,
-    //       },
-    //     }),
-    //   },
-    // });
+    const updatedCourse = await this.coursesRepository.update({
+      where: { id: courseId },
+      data: {
+        ...updateCourseDto,
+        ...(uploadedFile && {
+          thumbnail: {
+            url: uploadedFile.secure_url,
+            publicId: uploadedFile.public_id,
+          },
+        }),
+      } as Prisma.CourseUpdateInput,
+    });
 
-    return course;
+    return updatedCourse;
   }
 }
