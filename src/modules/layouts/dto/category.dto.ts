@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class BenefitDto {
+export class CategoryDto {
   @IsString()
   @IsNotEmpty()
   readonly title: string;

@@ -1,6 +1,12 @@
-import { Transform, Type } from "class-transformer";
-import { IsInt, IsNotEmpty, IsString, IsUrl, ValidateNested } from "class-validator";
-import { LinkDto } from "./link.dto";
+import { Transform, Type } from 'class-transformer';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
+import { LinkDto } from './link.dto';
 
 export class CourseDetailDto {
   @IsUrl()

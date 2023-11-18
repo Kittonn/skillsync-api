@@ -18,6 +18,12 @@ enum Level {
   ADVANCED
 }
 
+enum Type {
+  BANNER
+  FAQ
+  CATEGORY
+}
+
 type Avatar {
   publicId String
   url      String
@@ -46,7 +52,7 @@ type Faq {
   answer   String
 }
 
-type category {
+type Category {
   title String
 }
 
@@ -150,10 +156,10 @@ model Course {
 
 model Layout {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  type       String
+  type       Type       @unique
   faq        Faq[]
-  categories category[]
-  banner     Banner
+  categories Category[]
+  banner     Banner?
 
   @@map("layouts")
 }

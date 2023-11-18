@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
-import {
-  FindAllUsersParams,
-  UpdateUserParams,
-} from '@/shared/interfaces/user';
+import { FindAllUsersParams, UpdateUserParams } from '@/shared/interfaces/user';
 
 @Injectable()
 export class UsersRepository {
