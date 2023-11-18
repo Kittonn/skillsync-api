@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -27,5 +28,20 @@ export class LayoutsController {
     @Body() createLayoutDto: CreateLayoutDto,
   ) {
     return this.layoutsService.createLayout(file, createLayoutDto);
+  }
+
+  @Put()
+  @UseInterceptors(FileInterceptor('file'))
+  update(
+    @UploadedFile(
+      new FileValidationPipe({
+        maxSize: 10 * 1024 * 1024,
+        fileType: /^image\/(png|jpeg|jpg|webp)$/,
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() updateLayoutDto: CreateLayoutDto,
+  ) {
+    return this.layoutsService.updateLayout(file, updateLayoutDto);
   }
 }
