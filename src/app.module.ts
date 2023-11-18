@@ -7,6 +7,7 @@ import { UsersModule } from '@/modules/users/users.module';
 import { CoursesModule } from '@/modules/courses/courses.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { NodeMailerModule } from '@/modules/node-mailer/node-mailer.module';
+import { LayoutsModule } from './modules/layouts/layouts.module';
 import configuration from '@/config/configuration';
 
 @Module({
@@ -20,6 +21,7 @@ import configuration from '@/config/configuration';
     CoursesModule,
     AuthModule,
     NodeMailerModule,
+    LayoutsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,17 @@
-import { Benefit, Level, Prerequisite, CourseDetail } from '@prisma/client';
-import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Level } from '@prisma/client';
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
+import { Transform, Type, plainToClass } from 'class-transformer';
+import { PrerequisiteDto } from './prerequisite.dto';
+import { CourseDetailDto } from './course-detail.dto';
+import { BenefitDto } from './benefit.dto';
 
 export class CreateCourseDto {
   @IsString()
@@ -29,19 +40,28 @@ export class CreateCourseDto {
   @IsNotEmpty()
   readonly level: Level;
 
-  @IsString()
+  @IsUrl()
   @IsNotEmpty()
   readonly demoUrl: string;
 
+  @IsArray()
   @IsNotEmpty()
-  @Transform(({ value }) => JSON.parse(value))
-  readonly benefits: Benefit[];
+  @Transform(({ value }) => plainToClass(BenefitDto, JSON.parse(value)))
+  @ValidateNested({ each: true })
+  @Type(() => BenefitDto)
+  readonly benefits: BenefitDto[];
 
+  @IsArray()
   @IsNotEmpty()
-  @Transform(({ value }) => JSON.parse(value))
-  readonly prerequisites: Prerequisite[];
+  @Transform(({ value }) => plainToClass(PrerequisiteDto, JSON.parse(value)))
+  @ValidateNested({ each: true })
+  @Type(() => PrerequisiteDto)
+  readonly prerequisites: PrerequisiteDto[];
 
+  @IsArray()
   @IsNotEmpty()
-  @Transform(({ value }) => JSON.parse(value))
-  readonly courseDetails: CourseDetail[];
+  @Transform(({ value }) => plainToClass(CourseDetailDto, JSON.parse(value)))
+  @ValidateNested({ each: true })
+  @Type(() => CourseDetailDto)
+  readonly courseDetails: CourseDetailDto[];
 }

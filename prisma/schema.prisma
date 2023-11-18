@@ -41,33 +41,51 @@ type Link {
   url   String
 }
 
+type Faq {
+  question String
+  answer   String
+}
+
+type category {
+  title String
+}
+
+type BannerImage {
+  url      String
+  publicId String
+}
+
+type Banner {
+  title    String
+  subtitle String
+  image    BannerImage
+}
+
 type CourseDetail {
-  videoUrl       String
-  title          String
-  videoSection   String
-  description    String
-  videoLength    Int
-  videoPlayer    String
-  links          Link[]
-  suggestion     String
+  videoUrl     String
+  title        String
+  videoSection String
+  description  String
+  videoLength  Int
+  videoPlayer  String
+  links        Link[]
+  suggestion   String
 }
 
 model User {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
-  email        String  @unique
+  email        String   @unique
   password     String
-  isVerified   Boolean @default(false)
+  isVerified   Boolean  @default(false)
   refreshToken String?
   avatar       Avatar?
-  role         Role    @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("users")
 }
-
-
 
 // model Review {
 //   id     String @id @default(auto()) @map("_id") @db.ObjectId
@@ -109,7 +127,6 @@ model User {
 //   @@map("comments")
 // }
 
-
 model Course {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String         @unique
@@ -122,12 +139,21 @@ model Course {
   demoUrl        String
   benefits       Benefit[]
   prerequisites  Prerequisite[]
-  courseDetails CourseDetail[]
+  courseDetails  CourseDetail[]
   rating         Int            @default(0)
   purchased      Int            @default(0)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@map("courses")
+}
+
+model Layout {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  type       String
+  faq        Faq[]
+  categories category[]
+  banner     Banner
+
+  @@map("layouts")
 }
