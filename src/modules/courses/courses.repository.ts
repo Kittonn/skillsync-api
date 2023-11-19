@@ -10,18 +10,32 @@ import { Course, Prisma } from '@prisma/client';
 export class CoursesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async excludeCourseDetailFields(course: Course, excludedFields: string[]) {
+    course.courseDetails = course.courseDetails.map((courseDetail) => {
+      return Object.fromEntries(
+        Object.entries(courseDetail).filter(
+          ([field]) => !excludedFields.includes(field),
+        ),
+      );
+    }) as Course['courseDetails'];
+
+    return course;
+  }
+
   async create(data: Prisma.CourseCreateInput): Promise<Course> {
     return this.prisma.course.create({ data });
   }
 
-  async findAll(params: FindAllCoursesParams): Promise<Course[]> {
+  async findAll(params?: FindAllCoursesParams): Promise<Course[]> {
     return this.prisma.course.findMany({ ...params });
   }
 
   async findOne(
     courseWhereUniqueInput: Prisma.CourseWhereUniqueInput,
   ): Promise<Course | null> {
-    return this.prisma.course.findUnique({ where: courseWhereUniqueInput });
+    return this.prisma.course.findUnique({
+      where: courseWhereUniqueInput,
+    });
   }
 
   async update(params: UpdateCourseParams): Promise<Course> {

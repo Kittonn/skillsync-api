@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Put,
@@ -19,12 +20,22 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Controller('courses')
-@Roles(Role.ADMIN)
-@UseGuards(AccessTokenGuard, RolesGuard)
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
+  @Get()
+  async getAllCourses(): Promise<Course[]> {
+    return this.coursesService.getAllCourses();
+  }
+
+  @Get(':id')
+  async getCourseById(@Param('id') courseId: string): Promise<Course> {
+    return this.coursesService.getCourseById(courseId);
+  }
+
   @Post()
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async createCourse(
     @UploadedFile(
@@ -40,6 +51,8 @@ export class CoursesController {
   }
 
   @Put('/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async updateCourse(
     @UploadedFile(

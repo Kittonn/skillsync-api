@@ -16,6 +16,38 @@ export class CoursesService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  async getCourseById(courseId: string): Promise<Course> {
+    const course = await this.coursesRepository.findOne({ id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    const excludedFields = ['links', 'suggestion', 'videoUrl'];
+
+    await this.coursesRepository.excludeCourseDetailFields(
+      course,
+      excludedFields,
+    );
+
+    return course;
+  }
+
+  async getAllCourses(): Promise<Course[]> {
+    const courses = await this.coursesRepository.findAll();
+
+    const excludedFields = ['links', 'suggestion', 'videoUrl'];
+
+    courses.forEach(async (course) => {
+      await this.coursesRepository.excludeCourseDetailFields(
+        course,
+        excludedFields,
+      );
+    });
+
+    return courses;
+  }
+
   async createCourse(
     createCourseDto: CreateCourseDto,
     file: Express.Multer.File,

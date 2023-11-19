@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateLayoutDto } from './dto/create-layout.dto';
 import { LayoutsRepository } from './layouts.repository';
-import { Type } from '@prisma/client';
+import { Layout, Type } from '@prisma/client';
 import { UpdateLayoutDto } from './dto/update-layout.dto';
 import { GetLayoutDto } from './dto/get-layout.dto';
 
@@ -18,7 +18,7 @@ export class LayoutsService {
     private readonly layoutsRepository: LayoutsRepository,
   ) {}
 
-  async getLayoutByType(getLayoutDto: GetLayoutDto) {
+  async getLayoutByType(getLayoutDto: GetLayoutDto): Promise<Layout> {
     const layout = await this.layoutsRepository.findOne({
       type: getLayoutDto.type,
     });
@@ -33,7 +33,7 @@ export class LayoutsService {
   async createLayout(
     file: Express.Multer.File,
     createLayoutDto: CreateLayoutDto,
-  ) {
+  ): Promise<Layout> {
     const existingLayout = await this.layoutsRepository.findOne({
       type: createLayoutDto.type,
     });
@@ -82,7 +82,7 @@ export class LayoutsService {
   async updateLayout(
     file: Express.Multer.File,
     updateLayoutDto: UpdateLayoutDto,
-  ) {
+  ): Promise<Layout> {
     const existingType = await this.layoutsRepository.findOne({
       type: updateLayoutDto.type,
     });
