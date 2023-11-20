@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 export interface FindAllUsersParams {
   skip?: number;
@@ -12,3 +12,5 @@ export interface UpdateUserParams {
   where: Prisma.UserWhereUniqueInput;
   data: Prisma.UserUpdateInput;
 }
+
+export type UserWithCourseIds = User & { courseIds: string[] };

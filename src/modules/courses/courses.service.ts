@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,7 +9,8 @@ import { CoursesRepository } from './courses.repository';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { Course, Prisma } from '@prisma/client';
+import { Course, Prisma, User } from '@prisma/client';
+import { UserWithCourseIds } from '@/shared/interfaces/user';
 
 @Injectable()
 export class CoursesService {
@@ -46,6 +49,31 @@ export class CoursesService {
     });
 
     return courses;
+  }
+
+  async getCourseContentById(courseId: string, user: User) {
+    let existingUser = user as UserWithCourseIds;
+    if (!existingUser.courseIds) {
+      throw new BadRequestException('User does not have any courses');
+    }
+
+    const userExistingCourse = existingUser?.courseIds.find(
+      (course) => course.toString() === courseId,
+    );
+
+    if (!userExistingCourse) {
+      throw new ForbiddenException('User does not have access to this course');
+    }
+
+    const existingCourse = await this.coursesRepository.findOne({
+      id: courseId,
+    });
+
+    if (!existingCourse) {
+      throw new NotFoundException('Course not found');
+    }
+
+    return existingCourse.courseDetails;
   }
 
   async createCourse(

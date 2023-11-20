@@ -13,11 +13,12 @@ import { CoursesService } from './courses.service';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
-import { Course, Role } from '@prisma/client';
+import { Course, Role, User } from '@prisma/client';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { FileValidationPipe } from '@/common/pipes/file-validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { GetUser } from '@/common/decorators/get-user.decorator';
 
 @Controller('courses')
 export class CoursesController {
@@ -31,6 +32,15 @@ export class CoursesController {
   @Get(':id')
   async getCourseById(@Param('id') courseId: string): Promise<Course> {
     return this.coursesService.getCourseById(courseId);
+  }
+
+  @Get('/content/:id')
+  @UseGuards(AccessTokenGuard)
+  async getCourseContentById(
+    @Param('id') courseId: string,
+    @GetUser() user: User,
+  ) {
+    return this.coursesService.getCourseContentById(courseId, user);
   }
 
   @Post()

@@ -18,11 +18,15 @@ export class UsersRepository {
   async findOne(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
   ): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: userWhereUniqueInput });
+    return this.prisma.user.findUnique({
+      where: userWhereUniqueInput,
+    });
   }
 
   async update(params: UpdateUserParams): Promise<User> {
-    return this.prisma.user.update({ ...params });
+    return this.prisma.user.update({
+      ...params,
+    });
   }
 
   async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
