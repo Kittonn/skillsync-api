@@ -10,7 +10,7 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course, Prisma, User } from '@prisma/client';
-import { UserWithCourseIds } from '@/shared/interfaces/user';
+import { UserWithCourseIds } from '@/shared/interfaces/user.interface';
 
 @Injectable()
 export class CoursesService {

@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { CreateLayoutDto } from './dto/create-layout.dto';
 import { LayoutsRepository } from './layouts.repository';
-import { Layout, Type } from '@prisma/client';
 import { UpdateLayoutDto } from './dto/update-layout.dto';
 import { GetLayoutDto } from './dto/get-layout.dto';
+import { Type } from '@/shared/enums/type.enum';
+import { Layout } from './schema/layout.schema';
 
 @Injectable()
 export class LayoutsService {
@@ -113,11 +114,9 @@ export class LayoutsService {
       uploadedFile = await this.cloudinaryService.uploadFile(file);
     }
 
-    const updatedLayout = await this.layoutsRepository.update({
-      where: {
-        id: existingType.id,
-      },
-      data: {
+    const updatedLayout = await this.layoutsRepository.update(
+      { _id: existingType.id },
+      {
         ...updateLayoutDto,
         ...(updateLayoutDto.banner &&
           uploadedFile && {
@@ -130,7 +129,7 @@ export class LayoutsService {
             },
           }),
       },
-    });
+    );
 
     return updatedLayout;
   }

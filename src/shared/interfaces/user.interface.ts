@@ -14,3 +14,8 @@ export interface UpdateUserParams {
 }
 
 export type UserWithCourseIds = User & { courseIds: string[] };
+
+export interface Avatar {
+  url: string;
+  publicId: string;
+}

@@ -1,35 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
-import { FindAllUsersParams, UpdateUserParams } from '@/shared/interfaces/user';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './schema/user.schema';
+import { FilterQuery, Model, UpdateQuery } from 'mongoose';
+import { QueryOptions } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UsersRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+  async create(user: Object): Promise<User> {
+    return this.userModel.create(user);
   }
 
-  async findAll(params: FindAllUsersParams): Promise<User[]> {
-    return this.prisma.user.findMany({ ...params });
+  async findAll(): Promise<User[]> {
+    return this.userModel.find();
   }
 
-  async findOne(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
+  async findOne(filter: FilterQuery<User>): Promise<User> {
+    return this.userModel.findOne(filter);
   }
 
-  async update(params: UpdateUserParams): Promise<User> {
-    return this.prisma.user.update({
-      ...params,
-    });
+  async find(
+    filter: FilterQuery<User>,
+    options?: QueryOptions,
+  ): Promise<User[]> {
+    return this.userModel.find(filter, null, options);
   }
 
-  async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({ where });
+  async update(
+    filter: FilterQuery<User>,
+    data: UpdateQuery<User>,
+    options = { new: true },
+  ): Promise<User> {
+    return this.userModel.findOneAndUpdate(filter, data, options);
+  }
+
+  async delete(filter: FilterQuery<User>): Promise<User> {
+    return this.userModel.findOneAndDelete(filter);
   }
 }

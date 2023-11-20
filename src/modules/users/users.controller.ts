@@ -26,34 +26,34 @@ export class UsersController {
     return this.usersService.getUserInfo(userId);
   }
 
-  @Put()
-  async updateUserInfo(
-    @GetUser('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return this.usersService.updateUserInfo(userId, updateUserDto);
-  }
+  // @Put()
+  // async updateUserInfo(
+  //   @GetUser('id') userId: string,
+  //   @Body() updateUserDto: UpdateUserDto,
+  // ): Promise<User> {
+  //   return this.usersService.updateUserInfo(userId, updateUserDto);
+  // }
 
-  @Put('/change-password')
-  async updatePassword(
-    @GetUser() user: User,
-    @Body() changePasswordDto: ChangePasswordDto,
-  ): Promise<User> {
-    return this.usersService.updatePassword(user, changePasswordDto);
-  }
+  // @Put('/change-password')
+  // async updatePassword(
+  //   @GetUser() user: User,
+  //   @Body() changePasswordDto: ChangePasswordDto,
+  // ): Promise<User> {
+  //   return this.usersService.updatePassword(user, changePasswordDto);
+  // }
 
-  @Put('/change-avatar')
-  @UseInterceptors(FileInterceptor('file'))
-  async updateAvatar(
-    @UploadedFile(
-      new FileValidationPipe({
-        maxSize: 10 * 1024 * 1024,
-        fileType: /^image\/(png|jpeg|jpg|webp)$/,
-      }),
-    )
-    file: Express.Multer.File,
-    @GetUser('id') userId: string,
-  ): Promise<User> {
-    return this.usersService.updateAvatar(file, userId);
-  }
+  // @Put('/change-avatar')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async updateAvatar(
+  //   @UploadedFile(
+  //     new FileValidationPipe({
+  //       maxSize: 10 * 1024 * 1024,
+  //       fileType: /^image\/(png|jpeg|jpg|webp)$/,
+  //     }),
+  //   )
+  //   file: Express.Multer.File,
+  //   @GetUser('id') userId: string,
+  // ): Promise<User> {
+  //   return this.usersService.updateAvatar(file, userId);
+  // }
 }

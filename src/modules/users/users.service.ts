@@ -23,67 +23,67 @@ export class UsersService {
     return userInfo as User;
   }
 
-  async updateUserInfo(
-    userId: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    const user = await this.usersRepository.update({
-      where: { id: userId },
-      data: updateUserDto,
-    });
+  // async updateUserInfo(
+  //   userId: string,
+  //   updateUserDto: UpdateUserDto,
+  // ): Promise<User> {
+  //   const user = await this.usersRepository.update({
+  //     where: { id: userId },
+  //     data: updateUserDto,
+  //   });
 
-    await this.redisService.set(userId, JSON.stringify(user));
+  //   await this.redisService.set(userId, JSON.stringify(user));
 
-    const { password, refreshToken, ...userInfo } = user;
-    return userInfo as User;
-  }
+  //   const { password, refreshToken, ...userInfo } = user;
+  //   return userInfo as User;
+  // }
 
-  async updatePassword(
-    user: User,
-    changePasswordDto: ChangePasswordDto,
-  ): Promise<User> {
-    const isPasswordMatch = await compare(
-      changePasswordDto.oldPassword,
-      user.password,
-    );
+  // async updatePassword(
+  //   user: User,
+  //   changePasswordDto: ChangePasswordDto,
+  // ): Promise<User> {
+  //   const isPasswordMatch = await compare(
+  //     changePasswordDto.oldPassword,
+  //     user.password,
+  //   );
 
-    if (!isPasswordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+  //   if (!isPasswordMatch) {
+  //     throw new UnauthorizedException('Invalid credentials');
+  //   }
 
-    const hashedPassword = await hash(changePasswordDto.newPassword);
+  //   const hashedPassword = await hash(changePasswordDto.newPassword);
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: user.id },
-      data: { password: hashedPassword },
-    });
+  //   const updatedUser = await this.usersRepository.update({
+  //     where: { id: user.id },
+  //     data: { password: hashedPassword },
+  //   });
 
-    await this.redisService.set(user.id, JSON.stringify(updatedUser));
+  //   await this.redisService.set(user.id, JSON.stringify(updatedUser));
 
-    const { password, refreshToken, ...userInfo } = updatedUser;
-    return userInfo as User;
-  }
+  //   const { password, refreshToken, ...userInfo } = updatedUser;
+  //   return userInfo as User;
+  // }
 
-  async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
-    const user = await this.usersRepository.findOne({ id: userId });
+  // async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
+  //   const user = await this.usersRepository.findOne({ id: userId });
 
-    const uploadedFile = await this.cloudinaryService.uploadFile(file);
-    const avatarData = {
-      publicId: uploadedFile.public_id,
-      url: uploadedFile.secure_url,
-    };
+  //   const uploadedFile = await this.cloudinaryService.uploadFile(file);
+  //   const avatarData = {
+  //     publicId: uploadedFile.public_id,
+  //     url: uploadedFile.secure_url,
+  //   };
 
-    if (user.avatar?.publicId) {
-      await this.cloudinaryService.deleteFile(user.avatar.publicId);
-    }
+  //   if (user.avatar?.publicId) {
+  //     await this.cloudinaryService.deleteFile(user.avatar.publicId);
+  //   }
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: userId },
-      data: { avatar: avatarData },
-    });
+  //   const updatedUser = await this.usersRepository.update({
+  //     where: { id: userId },
+  //     data: { avatar: avatarData },
+  //   });
 
-    await this.redisService.set(userId, JSON.stringify(updatedUser));
-    const { password, refreshToken, ...userInfo } = updatedUser;
-    return userInfo as User;
-  }
+  //   await this.redisService.set(userId, JSON.stringify(updatedUser));
+  //   const { password, refreshToken, ...userInfo } = updatedUser;
+  //   return userInfo as User;
+  // }
 }

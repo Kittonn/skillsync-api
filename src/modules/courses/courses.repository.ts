@@ -2,7 +2,7 @@ import { PrismaService } from '@/database/prisma/prisma.service';
 import {
   FindAllCoursesParams,
   UpdateCourseParams,
-} from '@/shared/interfaces/course';
+} from '@/shared/interfaces/course.interface';
 import { Injectable } from '@nestjs/common';
 import { Course, Prisma } from '@prisma/client';
 
