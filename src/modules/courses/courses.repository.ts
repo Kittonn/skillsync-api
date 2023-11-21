@@ -15,28 +15,23 @@ export class CoursesRepository {
 
   async findAll(
     select?: string | any | null,
-    populate?: string[] | any | null,
+    populate?: string | any | null,
   ): Promise<Course[]> {
     return this.courseModel
       .find()
       .select(select)
-      .populate(
-        'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
-        '-password -refreshToken',
-      );
+      .populate(populate, '-password -refreshToken');
   }
 
   async findOne(
     filter: FilterQuery<Course>,
     select?: string | any | null,
+    populate?: string | any | null,
   ): Promise<Course> {
     return this.courseModel
       .findOne(filter)
       .select(select)
-      .populate(
-        'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
-        '-password -refreshToken',
-      );
+      .populate(populate, '-password -refreshToken');
   }
 
   async find(

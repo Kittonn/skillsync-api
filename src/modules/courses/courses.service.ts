@@ -27,6 +27,7 @@ export class CoursesService {
     const course = await this.coursesRepository.findOne(
       { _id: courseId },
       '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
     );
 
     if (!course) {
@@ -38,6 +39,7 @@ export class CoursesService {
   async getAllCourses(): Promise<Course[]> {
     const courses = await this.coursesRepository.findAll(
       '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
     );
 
     return courses;
@@ -56,9 +58,13 @@ export class CoursesService {
       throw new ForbiddenException('User does not have access to this course');
     }
 
-    const existingCourse = await this.coursesRepository.findOne({
-      _id: courseId,
-    });
+    const existingCourse = await this.coursesRepository.findOne(
+      {
+        _id: courseId,
+      },
+      null,
+      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+    );
 
     if (!existingCourse) {
       throw new NotFoundException('Course not found');
