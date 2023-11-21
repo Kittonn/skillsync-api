@@ -11,6 +11,8 @@ import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course } from './schema/course.schema';
 import { User } from '../users/schema/user.schema';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
 
 @Injectable()
 export class CoursesService {
@@ -134,6 +136,83 @@ export class CoursesService {
             publicId: uploadedFile.public_id,
           },
         }),
+      },
+    );
+
+    return updatedCourse;
+  }
+
+  async createReview(
+    courseId: string,
+    user: User,
+    createReviewDto: CreateReviewDto,
+  ) {
+    const course = await this.coursesRepository.findOne({ _id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    const userExistingCourse = user?.courses.find(
+      (course) => course.toString() === courseId,
+    );
+
+    if (!userExistingCourse) {
+      throw new ForbiddenException('User does not have access to this course');
+    }
+
+    let rating;
+    if (course) {
+      rating =
+        (course.rating + createReviewDto.rating) / (course.reviews.length + 1);
+    }
+
+    const updatedCourse = await this.coursesRepository.update(
+      { _id: courseId },
+      {
+        $push: {
+          reviews: {
+            ...createReviewDto,
+            user: user._id,
+          },
+        },
+        rating,
+      },
+    );
+
+    return updatedCourse;
+  }
+
+  async addReviewReply(
+    courseId: string,
+    user: User,
+    createReplyReviewDto: CreateReplyReviewDto,
+  ) {
+    const course = await this.coursesRepository.findOne({ _id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    const review = course.reviews.find(
+      (review) => review._id.toString() === createReplyReviewDto.reviewId,
+    );
+
+    if (!review) {
+      throw new NotFoundException();
+    }
+
+    const reviewReply = {
+      ...createReplyReviewDto,
+      user: user._id,
+    };
+
+    review.reviewReplies.push(reviewReply as never);
+
+    const updatedCourse = await this.coursesRepository.update(
+      { _id: courseId },
+      {
+        reviews: course.reviews,
       },
     );
 

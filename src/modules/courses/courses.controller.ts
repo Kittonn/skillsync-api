@@ -21,6 +21,8 @@ import { GetUser } from '@/common/decorators/get-user.decorator';
 import { Role } from '@/shared/enums/role.enum';
 import { Course } from './schema/course.schema';
 import { User } from '../users/schema/user.schema';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -78,5 +80,27 @@ export class CoursesController {
     @Param('id') courseId: string,
   ): Promise<Course> {
     return this.coursesService.updateCourse(courseId, updateCourseDto, file);
+  }
+
+  @Post('/review/:id')
+  @UseGuards(AccessTokenGuard)
+  async createReview(
+    @Param('id') courseId: string,
+    @Body() createReviewDto: CreateReviewDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createReview(courseId, user, createReviewDto);
+  }
+
+  // add review reply
+  @Post('/review/:id/reply')
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async addReviewReply(
+    @Param('id') courseId: string,
+    @Body() createReplyReviewDto: CreateReplyReviewDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.addReviewReply(courseId, user, createReplyReviewDto);
   }
 }

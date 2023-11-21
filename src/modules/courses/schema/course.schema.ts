@@ -5,6 +5,7 @@ import { Document } from 'mongoose';
 import { Benefit } from './benefit.schema';
 import { Prerequisite } from './prerequisite.schema';
 import { CourseDetail } from './course-detail.schema';
+import { Review } from './review.schema';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
@@ -46,6 +47,9 @@ export class Course extends Document {
 
   @Prop({ default: 0 })
   purchased: number;
+
+  @Prop({ type: [Review] })
+  reviews: Review[];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

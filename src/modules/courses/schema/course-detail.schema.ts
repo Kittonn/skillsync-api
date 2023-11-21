@@ -1,8 +1,10 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Link } from './link.schema';
+import { Document } from 'mongoose';
+import { Comment } from './comment.schema';
 
 @Schema()
-export class CourseDetail {
+export class CourseDetail extends Document {
   @Prop()
   videoUrl: string;
 
@@ -26,4 +28,7 @@ export class CourseDetail {
 
   @Prop()
   suggestion: string;
+
+  @Prop({ type: [Comment] })
+  questions: Comment[];
 }
