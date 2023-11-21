@@ -3,8 +3,8 @@ import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RedisService } from '@/database/redis/redis.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { User } from '@prisma/client';
 import { compare, hash } from '@/shared/utils/encrypt';
+import { User } from './schema/user.schema';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 
 @Injectable()
@@ -27,14 +27,14 @@ export class UsersService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const user = await this.usersRepository.update({
-      where: { id: userId },
-      data: updateUserDto,
-    });
+    const user = await this.usersRepository.update(
+      { _id: userId },
+      updateUserDto,
+    );
 
     await this.redisService.set(userId, JSON.stringify(user));
 
-    const { password, refreshToken, ...userInfo } = user;
+    const { password, refreshToken, ...userInfo } = user['_doc'];
     return userInfo as User;
   }
 
@@ -53,14 +53,14 @@ export class UsersService {
 
     const hashedPassword = await hash(changePasswordDto.newPassword);
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: user.id },
-      data: { password: hashedPassword },
-    });
+    const updatedUser = await this.usersRepository.update(
+      { _id: user._id },
+      { password: hashedPassword },
+    );
 
-    await this.redisService.set(user.id, JSON.stringify(updatedUser));
+    await this.redisService.set(user._id, JSON.stringify(updatedUser));
 
-    const { password, refreshToken, ...userInfo } = updatedUser;
+    const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }
 
@@ -73,17 +73,17 @@ export class UsersService {
       url: uploadedFile.secure_url,
     };
 
-    if (user.avatar?.publicId) {
+    if (user?.avatar) {
       await this.cloudinaryService.deleteFile(user.avatar.publicId);
     }
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: userId },
-      data: { avatar: avatarData },
-    });
+    const updatedUser = await this.usersRepository.update(
+      { _id: userId },
+      { avatar: avatarData },
+    );
 
     await this.redisService.set(userId, JSON.stringify(updatedUser));
-    const { password, refreshToken, ...userInfo } = updatedUser;
+    const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }
 }

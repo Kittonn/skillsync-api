@@ -1,7 +1,7 @@
 export default () => ({
   port: +process.env.PORT || 3000,
   mongo: {
-    uri: process.env.MONGO_URI,
+    uri: process.env.DATABASE_URL,
   },
   redis: {
     host: process.env.REDIS_HOST,

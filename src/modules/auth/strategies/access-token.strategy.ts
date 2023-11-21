@@ -2,8 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from '../../../shared/interfaces/jwt';
-import { User } from '@prisma/client';
+import { JwtPayload } from '../../../shared/interfaces/jwt.interface';
+import { User } from '@/modules/users/schema/user.schema';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()

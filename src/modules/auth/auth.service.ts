@@ -9,7 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersRepository } from '../users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { User } from '../users/schema/user.schema';
 import { hash } from '@/shared/utils/encrypt';
 import {
   IActivateUserResponse,
@@ -20,11 +20,11 @@ import {
   ILogoutResponse,
   IRefreshTokenResponse,
   IRegisterResponse,
-} from '@/shared/interfaces/auth';
+} from '@/shared/interfaces/auth.interface';
 import { NodeMailerService } from '@/modules/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtPayload } from '@/shared/interfaces/jwt';
+import { JwtPayload } from '@/shared/interfaces/jwt.interface';
 import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
@@ -156,10 +156,10 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: existUser.id },
-      data: { refreshToken },
-    });
+    const updatedUser = await this.usersRepository.update(
+      { _id: existUser.id },
+      { refreshToken },
+    );
 
     await this.redisService.set(existUser.id, JSON.stringify(updatedUser));
 
@@ -168,10 +168,7 @@ export class AuthService {
 
   async logout(userId: string): Promise<ILogoutResponse> {
     await this.redisService.del(userId);
-    await this.usersRepository.update({
-      where: { id: userId },
-      data: { refreshToken: null },
-    });
+    await this.usersRepository.update({ _id: userId }, { refreshToken: null });
     return {
       message: 'User logged out',
     };
@@ -189,10 +186,10 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    const updatedUser = await this.usersRepository.update({
-      where: { id: userId },
-      data: { refreshToken },
-    });
+    const updatedUser = await this.usersRepository.update(
+      { _id: userId },
+      { refreshToken },
+    );
 
     await this.redisService.set(userId, JSON.stringify(updatedUser));
 

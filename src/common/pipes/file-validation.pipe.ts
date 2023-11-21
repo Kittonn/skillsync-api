@@ -1,4 +1,4 @@
-import { FileValidationOptions } from '@/shared/interfaces/file';
+import { FileValidationOptions } from '@/shared/interfaces/file.interface';
 import {
   ArgumentMetadata,
   BadRequestException,

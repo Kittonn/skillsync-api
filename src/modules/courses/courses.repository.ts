@@ -1,34 +1,45 @@
-import { PrismaService } from '@/database/prisma/prisma.service';
-import {
-  FindAllCoursesParams,
-  UpdateCourseParams,
-} from '@/shared/interfaces/course';
 import { Injectable } from '@nestjs/common';
-import { Course, Prisma } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { Course } from './schema/course.schema';
+import { FilterQuery, Model, QueryOptions } from 'mongoose';
 
 @Injectable()
 export class CoursesRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Course.name) private readonly courseModel: Model<Course>,
+  ) {}
 
-  async create(data: Prisma.CourseCreateInput): Promise<Course> {
-    return this.prisma.course.create({ data });
+  async create(course: Object): Promise<Course> {
+    return this.courseModel.create(course);
   }
 
-  async findAll(params: FindAllCoursesParams): Promise<Course[]> {
-    return this.prisma.course.findMany({ ...params });
+  async findAll(select?: string | any | null): Promise<Course[]> {
+    return this.courseModel.find().select(select);
   }
 
   async findOne(
-    courseWhereUniqueInput: Prisma.CourseWhereUniqueInput,
-  ): Promise<Course | null> {
-    return this.prisma.course.findUnique({ where: courseWhereUniqueInput });
+    filter: FilterQuery<Course>,
+    select?: string | any | null,
+  ): Promise<Course> {
+    return this.courseModel.findOne(filter).select(select);
   }
 
-  async update(params: UpdateCourseParams): Promise<Course> {
-    return this.prisma.course.update({ ...params });
+  async find(
+    filter: FilterQuery<Course>,
+    options?: QueryOptions,
+  ): Promise<Course[]> {
+    return this.courseModel.find(filter, null, options);
   }
 
-  async delete(where: Prisma.CourseWhereUniqueInput): Promise<Course> {
-    return this.prisma.course.delete({ where });
+  async update(
+    filter: FilterQuery<Course>,
+    data: Object,
+    options = { new: true },
+  ): Promise<Course> {
+    return this.courseModel.findOneAndUpdate(filter, data, options);
+  }
+
+  async delete(filter: FilterQuery<Course>): Promise<Course> {
+    return this.courseModel.findOneAndDelete(filter);
   }
 }

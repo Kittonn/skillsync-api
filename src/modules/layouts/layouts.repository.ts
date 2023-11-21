@@ -1,36 +1,42 @@
-import { PrismaService } from '@/database/prisma/prisma.service';
-import {
-  FindAllLayoutsParams,
-  UpdateLayoutParams,
-} from '@/shared/interfaces/layout';
 import { Injectable } from '@nestjs/common';
-import { Layout, Prisma } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { Layout } from './schema/layout.schema';
+import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
 
 @Injectable()
 export class LayoutsRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @InjectModel(Layout.name) private readonly layoutModel: Model<Layout>,
+  ) {}
 
-  async create(data: Prisma.LayoutCreateInput): Promise<Layout> {
-    return this.prismaService.layout.create({ data });
+  async create(layout: Object): Promise<Layout> {
+    return this.layoutModel.create(layout);
   }
 
-  async findAll(params: FindAllLayoutsParams): Promise<Layout[]> {
-    return this.prismaService.layout.findMany({ ...params });
+  async findAll(): Promise<Layout[]> {
+    return this.layoutModel.find();
   }
 
-  async findOne(
-    userWhereUniqueInput: Prisma.LayoutWhereUniqueInput,
-  ): Promise<Layout | null> {
-    return this.prismaService.layout.findUnique({
-      where: userWhereUniqueInput,
-    });
+  async find(
+    filter: FilterQuery<Layout>,
+    options?: QueryOptions,
+  ): Promise<Layout[]> {
+    return this.layoutModel.find(filter, null, options);
   }
 
-  async update(params: UpdateLayoutParams): Promise<Layout> {
-    return this.prismaService.layout.update({ ...params });
+  async findOne(filter: FilterQuery<Layout>): Promise<Layout> {
+    return this.layoutModel.findOne(filter);
   }
 
-  async delete(where: Prisma.LayoutWhereUniqueInput): Promise<Layout> {
-    return this.prismaService.layout.delete({ where });
+  async update(
+    filter: FilterQuery<Layout>,
+    data: UpdateQuery<Layout>,
+    options = { new: true },
+  ): Promise<Layout> {
+    return this.layoutModel.findOneAndUpdate(filter, data, options);
+  }
+
+  async delete(filter: FilterQuery<Layout>): Promise<Layout> {
+    return this.layoutModel.findOneAndDelete(filter);
   }
 }
