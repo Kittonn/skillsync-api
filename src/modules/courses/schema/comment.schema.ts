@@ -10,8 +10,6 @@ export class Comment extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
-  @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-  })
+  @Prop()
   commentReplies: Comment[];
 }

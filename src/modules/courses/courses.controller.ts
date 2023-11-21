@@ -23,6 +23,8 @@ import { Course } from './schema/course.schema';
 import { User } from '../users/schema/user.schema';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
+import { CreateQuestionDto } from './dto/create-question.dto';
+import { CreateAnswerDto } from './dto/create-answer.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -92,7 +94,6 @@ export class CoursesController {
     return this.coursesService.createReview(courseId, user, createReviewDto);
   }
 
-  // add review reply
   @Post('/review/:id/reply')
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
@@ -101,6 +102,34 @@ export class CoursesController {
     @Body() createReplyReviewDto: CreateReplyReviewDto,
     @GetUser() user: User,
   ): Promise<Course> {
-    return this.coursesService.addReviewReply(courseId, user, createReplyReviewDto);
+    return this.coursesService.addReviewReply(
+      courseId,
+      user,
+      createReplyReviewDto,
+    );
+  }
+
+  @Post('/question/:id')
+  @UseGuards(AccessTokenGuard)
+  async createQuestion(
+    @Param('id') courseId: string,
+    @Body() createQuestionDto: CreateQuestionDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createQuestion(
+      courseId,
+      user,
+      createQuestionDto,
+    );
+  }
+
+  @Post('/question/:id/answer')
+  @UseGuards(AccessTokenGuard)
+  async createAnswer(
+    @Param('id') courseId: string,
+    @Body() createAnswerDto: CreateAnswerDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createAnswer(courseId, user, createAnswerDto);
   }
 }

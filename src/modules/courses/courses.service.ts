@@ -13,6 +13,8 @@ import { Course } from './schema/course.schema';
 import { User } from '../users/schema/user.schema';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
+import { CreateQuestionDto } from './dto/create-question.dto';
+import { CreateAnswerDto } from './dto/create-answer.dto';
 
 @Injectable()
 export class CoursesService {
@@ -214,6 +216,78 @@ export class CoursesService {
       {
         reviews: course.reviews,
       },
+    );
+
+    return updatedCourse;
+  }
+
+  async createQuestion(
+    courseId: string,
+    user: User,
+    createQuestionDto: CreateQuestionDto,
+  ) {
+    const course = await this.coursesRepository.findOne({ _id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    const content = course.courseDetails.find(
+      (content) => content._id.toString() === createQuestionDto.contentId,
+    );
+
+    if (!content) {
+      throw new NotFoundException();
+    }
+
+    content.questions.push({
+      comment: createQuestionDto.question,
+      user: user._id,
+    } as never);
+
+    const updatedCourse = await this.coursesRepository.update(
+      { _id: courseId },
+      { courseDetails: course.courseDetails },
+    );
+
+    return updatedCourse;
+  }
+
+  async createAnswer(
+    courseId: string,
+    user: User,
+    createAnswerDto: CreateAnswerDto,
+  ): Promise<Course> {
+    const course = await this.coursesRepository.findOne({ _id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    const content = course.courseDetails.find(
+      (content) => content._id.toString() === createAnswerDto.contentId,
+    );
+
+    if (!content) {
+      throw new NotFoundException();
+    }
+
+    const question = content.questions.find(
+      (question) => question._id.toString() === createAnswerDto.questionId,
+    );
+
+    if (!question) {
+      throw new NotFoundException();
+    }
+
+    question.commentReplies.push({
+      user: user._id,
+      comment: createAnswerDto.answer,
+    } as never);
+
+    const updatedCourse = await this.coursesRepository.update(
+      { _id: courseId },
+      { courseDetails: course.courseDetails },
     );
 
     return updatedCourse;
