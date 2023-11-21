@@ -13,15 +13,30 @@ export class CoursesRepository {
     return this.courseModel.create(course);
   }
 
-  async findAll(select?: string | any | null): Promise<Course[]> {
-    return this.courseModel.find().select(select);
+  async findAll(
+    select?: string | any | null,
+    populate?: string[] | any | null,
+  ): Promise<Course[]> {
+    return this.courseModel
+      .find()
+      .select(select)
+      .populate(
+        'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+        '-password -refreshToken',
+      );
   }
 
   async findOne(
     filter: FilterQuery<Course>,
     select?: string | any | null,
   ): Promise<Course> {
-    return this.courseModel.findOne(filter).select(select);
+    return this.courseModel
+      .findOne(filter)
+      .select(select)
+      .populate(
+        'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+        '-password -refreshToken',
+      );
   }
 
   async find(
