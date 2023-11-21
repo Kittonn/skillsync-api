@@ -1,17 +1,13 @@
 import { Level } from '@/shared/enums/level.enum';
-import {
-  Benefit,
-  CourseDetail,
-  Prerequisite,
-  Thumbnail,
-} from '@/shared/interfaces/course.interface';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type CourseDocument = HydratedDocument<Course>;
+import { Thumbnail } from '@/shared/interfaces/course.interface';
+import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { Benefit } from './benefit.schema';
+import { Prerequisite } from './prerequisite.schema';
+import { CourseDetail } from './course-detail.schema';
 
 @Schema({ timestamps: true })
-export class Course {
+export class Course extends Document {
   @Prop({ required: true, unique: true })
   name: string;
 
@@ -24,7 +20,7 @@ export class Course {
   @Prop()
   estimatedPrice: number;
 
-  @Prop()
+  @Prop(raw({ url: String, publicId: String }))
   thumbnail: Thumbnail;
 
   @Prop()
@@ -36,13 +32,13 @@ export class Course {
   @Prop()
   demoUrl: string;
 
-  @Prop()
+  @Prop({ type: [Benefit] })
   benefits: Benefit[];
 
-  @Prop()
+  @Prop({ type: [Prerequisite] })
   prerequisites: Prerequisite[];
 
-  @Prop()
+  @Prop({ type: [CourseDetail] })
   courseDetails: CourseDetail[];
 
   @Prop({ default: 0 })

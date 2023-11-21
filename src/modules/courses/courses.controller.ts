@@ -13,12 +13,14 @@ import { CoursesService } from './courses.service';
 import { AccessTokenGuard } from '@/common/guards/access-token.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
-import { Course, Role, User } from '@prisma/client';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { FileValidationPipe } from '@/common/pipes/file-validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { GetUser } from '@/common/decorators/get-user.decorator';
+import { Role } from '@/shared/enums/role.enum';
+import { Course } from './schema/course.schema';
+import { User } from '../users/schema/user.schema';
 
 @Controller('courses')
 export class CoursesController {
@@ -56,7 +58,7 @@ export class CoursesController {
     )
     file: Express.Multer.File,
     @Body() createCourseDto: CreateCourseDto,
-  ) {
+  ): Promise<Course> {
     return this.coursesService.createCourse(createCourseDto, file);
   }
 

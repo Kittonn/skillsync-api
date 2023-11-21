@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma/prisma.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import { FilterQuery, Model, UpdateQuery } from 'mongoose';
-import { QueryOptions } from '@prisma/client/runtime/library';
+import { FilterQuery, Model, UpdateQuery, QueryOptions } from 'mongoose';
 
 @Injectable()
 export class UsersRepository {

@@ -9,8 +9,8 @@ import { CoursesRepository } from './courses.repository';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { Course, Prisma, User } from '@prisma/client';
-import { UserWithCourseIds } from '@/shared/interfaces/user.interface';
+import { Course } from './schema/course.schema';
+import { User } from '../users/schema/user.schema';
 
 @Injectable()
 export class CoursesService {
@@ -20,44 +20,31 @@ export class CoursesService {
   ) {}
 
   async getCourseById(courseId: string): Promise<Course> {
-    const course = await this.coursesRepository.findOne({ id: courseId });
+    const course = await this.coursesRepository.findOne(
+      { _id: courseId },
+      '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+    );
 
     if (!course) {
       throw new NotFoundException();
     }
-
-    const excludedFields = ['links', 'suggestion', 'videoUrl'];
-
-    await this.coursesRepository.excludeCourseDetailFields(
-      course,
-      excludedFields,
-    );
-
     return course;
   }
 
   async getAllCourses(): Promise<Course[]> {
-    const courses = await this.coursesRepository.findAll();
-
-    const excludedFields = ['links', 'suggestion', 'videoUrl'];
-
-    courses.forEach(async (course) => {
-      await this.coursesRepository.excludeCourseDetailFields(
-        course,
-        excludedFields,
-      );
-    });
+    const courses = await this.coursesRepository.findAll(
+      '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+    );
 
     return courses;
   }
 
   async getCourseContentById(courseId: string, user: User) {
-    let existingUser = user as UserWithCourseIds;
-    if (!existingUser.courseIds) {
+    if (!user.courses) {
       throw new BadRequestException('User does not have any courses');
     }
 
-    const userExistingCourse = existingUser?.courseIds.find(
+    const userExistingCourse = user?.courses.find(
       (course) => course.toString() === courseId,
     );
 
@@ -66,7 +53,7 @@ export class CoursesService {
     }
 
     const existingCourse = await this.coursesRepository.findOne({
-      id: courseId,
+      _id: courseId,
     });
 
     if (!existingCourse) {
@@ -102,7 +89,7 @@ export class CoursesService {
           publicId: uploadedFile.public_id,
         },
       }),
-    } as Prisma.CourseCreateInput);
+    });
 
     return createdCourse;
   }
@@ -113,7 +100,7 @@ export class CoursesService {
     file: Express.Multer.File,
   ): Promise<Course> {
     const course = await this.coursesRepository.findOne({
-      id: courseId,
+      _id: courseId,
     });
 
     if (!course) {
@@ -124,7 +111,10 @@ export class CoursesService {
       name: updateCourseDto.name,
     });
 
-    if (courseWithSameName && courseWithSameName.id !== course.id) {
+    if (
+      courseWithSameName &&
+      courseWithSameName._id.toString() !== course._id.toString()
+    ) {
       throw new ConflictException();
     }
 
@@ -134,9 +124,9 @@ export class CoursesService {
       await this.cloudinaryService.deleteFile(course.thumbnail.publicId);
     }
 
-    const updatedCourse = await this.coursesRepository.update({
-      where: { id: courseId },
-      data: {
+    const updatedCourse = await this.coursesRepository.update(
+      { _id: courseId },
+      {
         ...updateCourseDto,
         ...(uploadedFile && {
           thumbnail: {
@@ -144,8 +134,8 @@ export class CoursesService {
             publicId: uploadedFile.public_id,
           },
         }),
-      } as Prisma.CourseUpdateInput,
-    });
+      },
+    );
 
     return updatedCourse;
   }

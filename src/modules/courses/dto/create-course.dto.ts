@@ -1,4 +1,3 @@
-import { Level } from '@prisma/client';
 import {
   IsArray,
   IsEnum,
@@ -12,6 +11,7 @@ import { Transform, Type, plainToClass } from 'class-transformer';
 import { PrerequisiteDto } from './prerequisite.dto';
 import { CourseDetailDto } from './course-detail.dto';
 import { BenefitDto } from './benefit.dto';
+import { Level } from '@/shared/enums/level.enum';
 
 export class CreateCourseDto {
   @IsString()

@@ -1,5 +1,5 @@
-import { Type } from "@prisma/client";
-import { IsEnum } from "class-validator";
+import { Type } from '@/shared/enums/type.enum';
+import { IsEnum } from 'class-validator';
 
 export class GetLayoutDto {
   @IsEnum(Type)

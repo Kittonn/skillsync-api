@@ -1,4 +1,3 @@
-import { Faq, Type as TypeI, Banner } from '@prisma/client';
 import {
   IsEnum,
   IsNotEmpty,
@@ -9,11 +8,12 @@ import { CategoryDto } from './category.dto';
 import { Transform, plainToClass, Type } from 'class-transformer';
 import { FaqDto } from './faq.dto';
 import { BannerDto } from './banner.dto';
+import { Type as TypeEnum } from '@/shared/enums/type.enum';
 
 export class CreateLayoutDto {
-  @IsEnum(TypeI)
+  @IsEnum(TypeEnum)
   @IsNotEmpty()
-  readonly type: TypeI;
+  readonly type: TypeEnum;
 
   @IsOptional()
   @Transform(({ value }) => plainToClass(CategoryDto, JSON.parse(value)))

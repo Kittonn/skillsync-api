@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../../../shared/interfaces/jwt.interface';
-import { User } from '@prisma/client';
+import { User } from '@/modules/users/schema/user.schema';
 import { RedisService } from '@/database/redis/redis.service';
 import { compare } from '@/shared/utils/encrypt';
 import { Request } from 'express';

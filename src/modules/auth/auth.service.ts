@@ -9,7 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersRepository } from '../users/users.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { User } from '../users/schema/user.schema';
 import { hash } from '@/shared/utils/encrypt';
 import {
   IActivateUserResponse,
