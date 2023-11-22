@@ -17,5 +17,6 @@ import { NodeMailerModule } from '../node-mailer/node-mailer.module';
   ],
   controllers: [CoursesController],
   providers: [CoursesService, CoursesRepository],
+  exports: [CoursesRepository],
 })
 export class CoursesModule {}

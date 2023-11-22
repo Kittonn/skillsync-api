@@ -10,9 +10,6 @@ export class Order extends Document {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
-
-  @Prop({ required: true })
-  paymentInfo: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

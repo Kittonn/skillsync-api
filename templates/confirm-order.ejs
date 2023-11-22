@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Order - Skillsync</title>
+
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      min-width: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #fafafa;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.75;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+
+    .email-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .email-header {
+      background-color: #0070f3;
+      padding: 24px;
+      color: #fff;
+    }
+
+    .email-body {
+      padding: 24px;
+      background-color: #fff;
+    }
+
+    .email-footer {
+      padding: 24px;
+      background-color: #f6f6f6;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-wrapper">
+    <div class="email-header">
+      <h1>
+        Confirm Order - Skillsync
+      </h1>
+    </div>
+    <div class="email-body">
+      <p>
+        Hi <%= user.name %>,
+      </p>
+      <p>
+        Thank you for placing an order with Skillsync for the course "<%= order.courseName %>". Below are the details of
+          your order:
+      </p>
+      <h2>
+        Order ID: <%= order.orderId %>
+      </h2>
+      <h2>
+        Total Amount: <%= order.totalAmount %>
+      </h2>
+
+    </div>
+    <div class="email-footer">
+      <p>© 2023 Skillsync. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>
