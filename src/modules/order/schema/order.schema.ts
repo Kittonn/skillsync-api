@@ -12,7 +12,7 @@ export class Order extends Document {
   user: User;
 
   @Prop({ required: true })
-  paymentInfo: Object;
+  paymentInfo: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
