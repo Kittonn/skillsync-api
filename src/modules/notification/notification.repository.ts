@@ -40,4 +40,9 @@ export class NotificationRepository {
   async delete(filter: FilterQuery<Notification>): Promise<Notification> {
     return this.notificationModel.findOneAndDelete(filter);
   }
+
+  async deleteMany(filter: FilterQuery<Notification>): Promise<number> {
+    const result = await this.notificationModel.deleteMany(filter);
+    return result.deletedCount;
+  }
 }
