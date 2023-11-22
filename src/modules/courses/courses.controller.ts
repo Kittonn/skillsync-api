@@ -31,6 +31,13 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
+  async getAllCoursesWithNoAuth(): Promise<Course[]> {
+    return this.coursesService.getAllCoursesWithNoAuth();
+  }
+
+  @Get('/all')
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   async getAllCourses(): Promise<Course[]> {
     return this.coursesService.getAllCourses();
   }

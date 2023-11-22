@@ -45,7 +45,7 @@ export class CoursesRepository {
     filter: FilterQuery<Course>,
     options?: QueryOptions,
   ): Promise<Course[]> {
-    return this.courseModel.find(filter, null, options);
+    return this.courseModel.find(filter, null, options)
   }
 
   async update(

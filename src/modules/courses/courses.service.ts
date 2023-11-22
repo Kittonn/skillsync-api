@@ -40,13 +40,25 @@ export class CoursesService {
     return course;
   }
 
-  async getAllCourses(): Promise<Course[]> {
+  async getAllCoursesWithNoAuth(): Promise<Course[]> {
     const courses = await this.coursesRepository.findAll(
       '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
       'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
     );
 
     return courses;
+  }
+
+  async getAllCourses(): Promise<Course[]> {
+    return await this.coursesRepository.find(
+      {},
+      {
+        sort: { createdAt: -1 },
+        populate: {
+          path: 'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+        },
+      },
+    );
   }
 
   async getCourseContentById(courseId: string, user: User) {

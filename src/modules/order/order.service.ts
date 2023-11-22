@@ -21,6 +21,13 @@ export class OrderService {
     private readonly nodeMailerService: NodeMailerService,
   ) {}
 
+  async getOrders(): Promise<Order[]> {
+    return this.orderRepository.find(
+      {},
+      { populate: 'user course', sort: { createdAt: -1 } },
+    );
+  }
+
   async createOrder(
     userId: string,
     createOrderDto: CreateOrderDto,
