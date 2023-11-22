@@ -58,8 +58,6 @@ export class OrderService {
       title: 'New Order',
     });
 
-    console.log();
-
     await this.nodeMailerService.sendEmail({
       context: {
         user: {
@@ -75,6 +73,10 @@ export class OrderService {
       subject: 'Confirm your order',
       template: 'confirm-order',
     });
+
+    course.purchased += 1;
+
+    await course.save();
 
     return createdOrder;
   }
