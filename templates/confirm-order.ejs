@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skillsync Activation Email</title>
+  <title>Confirm Order - Skillsync</title>
 
   <style type="text/css">
     body {
@@ -58,18 +58,25 @@
 <body>
   <div class="email-wrapper">
     <div class="email-header">
-      <h1>Welcome to Skillsync</h1>
+      <h1>
+        Confirm Order - Skillsync
+      </h1>
     </div>
     <div class="email-body">
-      <p>Hi <%= user.name %>,</p>
-      <p>Thanks for signing up for Skillsync! We're excited to have you on board.</p>
-      <p>Before you can start using Skillsync, you need to confirm your email address.</p>
-      <p>Copy this code and paste it into the activation form on the Skillsync website:</p>
+      <p>
+        Hi <%= user.name %>,
+      </p>
+      <p>
+        Thank you for placing an order with Skillsync for the course "<%= order.courseName %>". Below are the details of
+          your order:
+      </p>
       <h2>
-        <%= activationCode %>
+        Order ID: <%= order.orderId %>
       </h2>
-      <p>If you didn't sign up for Skillsync, you can safely ignore this email.</p>
-      <p>Thanks,<br>The Skillsync Team</p>
+      <h2>
+        Total Amount: <%= order.totalAmount %>
+      </h2>
+
     </div>
     <div class="email-footer">
       <p>© 2023 Skillsync. All rights reserved.</p>

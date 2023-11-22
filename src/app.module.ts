@@ -8,7 +8,10 @@ import { CoursesModule } from '@/modules/courses/courses.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { NodeMailerModule } from '@/modules/node-mailer/node-mailer.module';
 import { LayoutsModule } from './modules/layouts/layouts.module';
+import { OrderModule } from './modules/order/order.module';
+import { NotificationModule } from './modules/notification/notification.module';
 import configuration from '@/config/configuration';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import configuration from '@/config/configuration';
     AuthModule,
     NodeMailerModule,
     LayoutsModule,
+    OrderModule,
+    NotificationModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

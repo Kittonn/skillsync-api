@@ -21,6 +21,10 @@ import { GetUser } from '@/common/decorators/get-user.decorator';
 import { Role } from '@/shared/enums/role.enum';
 import { Course } from './schema/course.schema';
 import { User } from '../users/schema/user.schema';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
+import { CreateQuestionDto } from './dto/create-question.dto';
+import { CreateAnswerDto } from './dto/create-answer.dto';
 
 @Controller('courses')
 export class CoursesController {
@@ -78,5 +82,54 @@ export class CoursesController {
     @Param('id') courseId: string,
   ): Promise<Course> {
     return this.coursesService.updateCourse(courseId, updateCourseDto, file);
+  }
+
+  @Post('/review/:id')
+  @UseGuards(AccessTokenGuard)
+  async createReview(
+    @Param('id') courseId: string,
+    @Body() createReviewDto: CreateReviewDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createReview(courseId, user, createReviewDto);
+  }
+
+  @Post('/review/:id/reply')
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async addReviewReply(
+    @Param('id') courseId: string,
+    @Body() createReplyReviewDto: CreateReplyReviewDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.addReviewReply(
+      courseId,
+      user,
+      createReplyReviewDto,
+    );
+  }
+
+  @Post('/question/:id')
+  @UseGuards(AccessTokenGuard)
+  async createQuestion(
+    @Param('id') courseId: string,
+    @Body() createQuestionDto: CreateQuestionDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createQuestion(
+      courseId,
+      user,
+      createQuestionDto,
+    );
+  }
+
+  @Post('/question/:id/answer')
+  @UseGuards(AccessTokenGuard)
+  async createAnswer(
+    @Param('id') courseId: string,
+    @Body() createAnswerDto: CreateAnswerDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.createAnswer(courseId, user, createAnswerDto);
   }
 }
