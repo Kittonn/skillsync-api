@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -138,5 +139,12 @@ export class CoursesController {
     @GetUser() user: User,
   ): Promise<Course> {
     return this.coursesService.createAnswer(courseId, user, createAnswerDto);
+  }
+
+  @Delete('/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async deleteCourse(@Param('id') courseId: string): Promise<string> {
+    return this.coursesService.deleteCourse(courseId);
   }
 }

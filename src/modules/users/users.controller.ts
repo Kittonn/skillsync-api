@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Put,
   UploadedFile,
   UseGuards,
@@ -73,5 +75,12 @@ export class UsersController {
   @UseGuards(RolesGuard)
   async updateRole(@Body() updateRoleDto: UpdateRoleDto): Promise<User> {
     return this.usersService.updateRole(updateRoleDto);
+  }
+
+  @Delete('/:userId')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async deleteUser(@Param('userId') userId: string): Promise<string> {
+    return this.usersService.deleteUser(userId);
   }
 }

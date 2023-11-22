@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RedisService } from '@/database/redis/redis.service';
@@ -92,7 +96,15 @@ export class UsersService {
     return userInfo as User;
   }
 
-  async updateRole(updateRoleDto: UpdateRoleDto) {
+  async updateRole(updateRoleDto: UpdateRoleDto): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      _id: updateRoleDto.userId,
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     const updatedUser = await this.usersRepository.update(
       { _id: updateRoleDto.userId },
       { role: updateRoleDto.role },
@@ -104,5 +116,17 @@ export class UsersService {
     );
     const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
+  }
+
+  async deleteUser(userId: string): Promise<string> {
+    const user = await this.usersRepository.findOne({ _id: userId });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.usersRepository.delete({ _id: userId });
+
+    return 'User deleted';
   }
 }
