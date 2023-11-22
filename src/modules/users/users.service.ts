@@ -23,6 +23,10 @@ export class UsersService {
     return userInfo as User;
   }
 
+  async getAllUsers() {
+    return await this.usersRepository.find({}, { sort: { createdAt: -1 } });
+  }
+
   async updateUserInfo(
     userId: string,
     updateUserDto: UpdateUserDto,

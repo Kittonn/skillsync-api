@@ -30,8 +30,14 @@ export class CoursesService {
   async getCourseById(courseId: string): Promise<Course> {
     const course = await this.coursesRepository.findOne(
       { _id: courseId },
-      '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
-      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+      {
+        populate: {
+          path: 'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+          select: '-password -courses -role -refreshToken',
+        },
+        select:
+          '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+      },
     );
 
     if (!course) {
@@ -40,13 +46,31 @@ export class CoursesService {
     return course;
   }
 
-  async getAllCourses(): Promise<Course[]> {
-    const courses = await this.coursesRepository.findAll(
-      '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
-      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+  async getAllCoursesWithNoAuth(): Promise<Course[]> {
+    const courses = await this.coursesRepository.find(
+      {},
+      {
+        populate: {
+          path: 'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+          select: '-password -courses -role -refreshToken',
+        },
+        select:
+          '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+      },
     );
 
     return courses;
+  }
+
+  async getAllCourses(): Promise<Course[]> {
+    return await this.coursesRepository.find(
+      {},
+      {
+        sort: { createdAt: -1 },
+        populate:
+          'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+      },
+    );
   }
 
   async getCourseContentById(courseId: string, user: User) {
@@ -66,8 +90,14 @@ export class CoursesService {
       {
         _id: courseId,
       },
-      null,
-      'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+      {
+        populate: {
+          path: 'reviews.user reviews.reviewReplies.user courseDetails.questions.user courseDetails.questions.commentReplies.user',
+          select: '-password -courses -role -refreshToken',
+        },
+        select:
+          '-courseDetails.videoUrl -courseDetails.suggestion -courseDetails.links',
+      },
     );
 
     if (!existingCourse) {
@@ -276,8 +306,9 @@ export class CoursesService {
   ): Promise<Course> {
     const course = await this.coursesRepository.findOne(
       { _id: courseId },
-      null,
-      'courseDetails.questions.user',
+      {
+        populate: 'courseDetails.questions.user',
+      },
     );
 
     if (!course) {

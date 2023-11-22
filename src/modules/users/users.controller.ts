@@ -15,6 +15,9 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from '@/common/pipes/file-validation.pipe';
 import { User } from './schema/user.schema';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { Roles } from '@/common/decorators/roles.decorator';
+import { Role } from '@/shared/enums/role.enum';
 
 @Controller('users')
 @UseGuards(AccessTokenGuard)
@@ -24,6 +27,13 @@ export class UsersController {
   @Get('/me')
   async getUserInfo(@GetUser('_id') userId: string): Promise<User> {
     return this.usersService.getUserInfo(userId);
+  }
+
+  @Get()
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
   }
 
   @Put()
