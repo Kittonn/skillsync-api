@@ -6,6 +6,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { compare, hash } from '@/shared/utils/encrypt';
 import { User } from './schema/user.schema';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class UsersService {
@@ -87,6 +88,20 @@ export class UsersService {
     );
 
     await this.redisService.set(userId, JSON.stringify(updatedUser));
+    const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
+    return userInfo as User;
+  }
+
+  async updateRole(updateRoleDto: UpdateRoleDto) {
+    const updatedUser = await this.usersRepository.update(
+      { _id: updateRoleDto.userId },
+      { role: updateRoleDto.role },
+    );
+
+    await this.redisService.set(
+      updateRoleDto.userId,
+      JSON.stringify(updatedUser),
+    );
     const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }

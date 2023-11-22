@@ -18,6 +18,7 @@ import { User } from './schema/user.schema';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/shared/enums/role.enum';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('users')
 @UseGuards(AccessTokenGuard)
@@ -65,5 +66,12 @@ export class UsersController {
     @GetUser('_id') userId: string,
   ): Promise<User> {
     return this.usersService.updateAvatar(file, userId);
+  }
+
+  @Put('/update-role')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async updateRole(@Body() updateRoleDto: UpdateRoleDto): Promise<User> {
+    return this.usersService.updateRole(updateRoleDto);
   }
 }
