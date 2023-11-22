@@ -7,12 +7,14 @@ import { CloudinaryModule } from '@/database/cloudinary/cloudinary.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Course, CourseSchema } from './schema/course.schema';
 import { NodeMailerModule } from '../node-mailer/node-mailer.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     RedisModule,
     CloudinaryModule,
     NodeMailerModule,
+    NotificationModule,
     MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
   ],
   controllers: [CoursesController],

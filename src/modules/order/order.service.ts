@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
-import { User } from '../users/schema/user.schema';
 import { UsersRepository } from '../users/users.repository';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { NotificationRepository } from '../notification/notification.repository';

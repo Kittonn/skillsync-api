@@ -16,6 +16,7 @@ import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { NodeMailerService } from '../node-mailer/node-mailer.service';
+import { NotificationRepository } from '../notification/notification.repository';
 
 @Injectable()
 export class CoursesService {
@@ -23,6 +24,7 @@ export class CoursesService {
     private readonly coursesRepository: CoursesRepository,
     private readonly cloudinaryService: CloudinaryService,
     private readonly nodeMailerService: NodeMailerService,
+    private readonly notificationRepository: NotificationRepository,
   ) {}
 
   async getCourseById(courseId: string): Promise<Course> {
@@ -258,6 +260,12 @@ export class CoursesService {
       { courseDetails: course.courseDetails },
     );
 
+    await this.notificationRepository.create({
+      user: user._id,
+      title: 'New question',
+      message: `You have a new question in ${content.title}`,
+    });
+
     return updatedCourse;
   }
 
@@ -302,24 +310,32 @@ export class CoursesService {
       { courseDetails: course.courseDetails },
     );
 
-    await this.nodeMailerService.sendEmail({
-      context: {
-        user: {
-          name: question.user.name,
-        },
-        reply: {
+    if (question.user._id.toString() === user._id.toString()) {
+      await this.notificationRepository.create({
+        user: user._id,
+        title: 'New answer',
+        message: `You have a new question reply in ${content.title}`,
+      });
+    } else {
+      await this.nodeMailerService.sendEmail({
+        context: {
           user: {
-            name: user.name,
+            name: question.user.name,
           },
-          courseName: course.name,
-          question: question.comment,
-          reply: createAnswerDto.answer,
+          reply: {
+            user: {
+              name: user.name,
+            },
+            courseName: course.name,
+            question: question.comment,
+            reply: createAnswerDto.answer,
+          },
         },
-      },
-      subject: 'Your question has been answered',
-      to: question.user.email,
-      template: 'question-reply',
-    });
+        subject: 'Your question has been answered',
+        to: question.user.email,
+        template: 'question-reply',
+      });
+    }
 
     return updatedCourse;
   }
