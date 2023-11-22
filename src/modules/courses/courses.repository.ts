@@ -17,10 +17,13 @@ export class CoursesRepository {
     select?: string | any | null,
     populate?: string | any | null,
   ): Promise<Course[]> {
-    return this.courseModel
-      .find()
-      .select(select)
-      .populate(populate, '-password -refreshToken');
+    if (populate) {
+      return this.courseModel
+        .find()
+        .select(select)
+        .populate(populate, '-password -refreshToken');
+    }
+    return this.courseModel.find().select(select);
   }
 
   async findOne(
@@ -28,10 +31,14 @@ export class CoursesRepository {
     select?: string | any | null,
     populate?: string | any | null,
   ): Promise<Course> {
-    return this.courseModel
-      .findOne(filter)
-      .select(select)
-      .populate(populate, '-password -refreshToken');
+    if (populate) {
+      return this.courseModel
+        .findOne(filter)
+        .select(select)
+        .populate(populate, '-password -refreshToken');
+    }
+
+    return this.courseModel.findOne(filter).select(select);
   }
 
   async find(

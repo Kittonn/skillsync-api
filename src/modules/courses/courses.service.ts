@@ -15,12 +15,14 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateReplyReviewDto } from './dto/create-reply-review.dto';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
+import { NodeMailerService } from '../node-mailer/node-mailer.service';
 
 @Injectable()
 export class CoursesService {
   constructor(
     private readonly coursesRepository: CoursesRepository,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly nodeMailerService: NodeMailerService,
   ) {}
 
   async getCourseById(courseId: string): Promise<Course> {
@@ -264,7 +266,11 @@ export class CoursesService {
     user: User,
     createAnswerDto: CreateAnswerDto,
   ): Promise<Course> {
-    const course = await this.coursesRepository.findOne({ _id: courseId });
+    const course = await this.coursesRepository.findOne(
+      { _id: courseId },
+      null,
+      'courseDetails.questions.user',
+    );
 
     if (!course) {
       throw new NotFoundException();
@@ -295,6 +301,25 @@ export class CoursesService {
       { _id: courseId },
       { courseDetails: course.courseDetails },
     );
+
+    await this.nodeMailerService.sendEmail({
+      context: {
+        user: {
+          name: question.user.name,
+        },
+        reply: {
+          user: {
+            name: user.name,
+          },
+          courseName: course.name,
+          question: question.comment,
+          reply: createAnswerDto.answer,
+        },
+      },
+      subject: 'Your question has been answered',
+      to: question.user.email,
+      template: 'question-reply',
+    });
 
     return updatedCourse;
   }
