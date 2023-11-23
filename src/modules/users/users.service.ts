@@ -70,7 +70,10 @@ export class UsersService {
   async updateAvatar(file: Express.Multer.File, userId: string): Promise<User> {
     const user = await this.usersRepository.findOne({ id: userId });
 
-    const uploadedFile = await this.cloudinaryService.uploadFile(file);
+    const uploadedFile = await this.cloudinaryService.uploadFile(
+      file,
+      'avatar',
+    );
     const avatarData = {
       publicId: uploadedFile.public_id,
       url: uploadedFile.secure_url,

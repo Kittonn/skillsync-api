@@ -60,7 +60,7 @@ export class LayoutsService {
     }
 
     if (createLayoutDto.type === Type.BANNER && file) {
-      uploadedFile = await this.cloudinaryService.uploadFile(file);
+      uploadedFile = await this.cloudinaryService.uploadFile(file, 'banner');
     }
 
     const createdLayout = await this.layoutsRepository.create({
@@ -111,7 +111,7 @@ export class LayoutsService {
       await this.cloudinaryService.deleteFile(
         existingType.banner.image.publicId,
       );
-      uploadedFile = await this.cloudinaryService.uploadFile(file);
+      uploadedFile = await this.cloudinaryService.uploadFile(file, 'banner');
     }
 
     const updatedLayout = await this.layoutsRepository.update(
