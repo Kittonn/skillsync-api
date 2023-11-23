@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RedisService } from '@/database/redis/redis.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { compare, hash } from '@/shared/utils/encrypt.util';
 import { User } from './schema/user.schema';
@@ -16,14 +15,13 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly redisService: RedisService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async getUserInfo(userId: string): Promise<User> {
-    const user = JSON.parse(await this.redisService.get(userId));
+    const user = await this.usersRepository.findOne({ _id: userId });
 
-    const { password, refreshToken, ...userInfo } = user;
+    const { password, refreshToken, ...userInfo } = user['_doc'];
 
     return userInfo as User;
   }
@@ -40,8 +38,6 @@ export class UsersService {
       { _id: userId },
       updateUserDto,
     );
-
-    await this.redisService.set(userId, JSON.stringify(user));
 
     const { password, refreshToken, ...userInfo } = user['_doc'];
     return userInfo as User;
@@ -67,8 +63,6 @@ export class UsersService {
       { password: hashedPassword },
     );
 
-    await this.redisService.set(user._id, JSON.stringify(updatedUser));
-
     const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }
@@ -91,7 +85,6 @@ export class UsersService {
       { avatar: avatarData },
     );
 
-    await this.redisService.set(userId, JSON.stringify(updatedUser));
     const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }
@@ -110,10 +103,6 @@ export class UsersService {
       { role: updateRoleDto.role },
     );
 
-    await this.redisService.set(
-      updateRoleDto.userId,
-      JSON.stringify(updatedUser),
-    );
     const { password, refreshToken, ...userInfo } = updatedUser['_doc'];
     return userInfo as User;
   }

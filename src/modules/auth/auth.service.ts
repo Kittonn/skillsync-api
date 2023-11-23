@@ -25,7 +25,6 @@ import { NodeMailerService } from '@/modules/node-mailer/node-mailer.service';
 import { ActivationDto } from './dto/activation.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from '@/shared/interfaces/jwt.interface';
-import { RedisService } from '@/database/redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +33,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly nodeMailerService: NodeMailerService,
-    private readonly redisService: RedisService,
   ) {}
 
   private async createActivationToken(
@@ -161,13 +159,10 @@ export class AuthService {
       { refreshToken },
     );
 
-    await this.redisService.set(existUser.id, JSON.stringify(updatedUser));
-
     return token;
   }
 
   async logout(userId: string): Promise<ILogoutResponse> {
-    await this.redisService.del(userId);
     await this.usersRepository.update({ _id: userId }, { refreshToken: null });
     return {
       message: 'User logged out',
@@ -175,7 +170,7 @@ export class AuthService {
   }
 
   async refresh(userId: string): Promise<IRefreshTokenResponse> {
-    const existUser = JSON.parse(await this.redisService.get(userId));
+    const existUser = await this.usersRepository.findOne({ _id: userId });
 
     if (!existUser) {
       throw new UnauthorizedException('Invalid credentials');
@@ -190,8 +185,6 @@ export class AuthService {
       { _id: userId },
       { refreshToken },
     );
-
-    await this.redisService.set(userId, JSON.stringify(updatedUser));
 
     return token;
   }
