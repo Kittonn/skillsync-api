@@ -7,7 +7,7 @@ import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RedisService } from '@/database/redis/redis.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { compare, hash } from '@/shared/utils/encrypt';
+import { compare, hash } from '@/shared/utils/encrypt.util';
 import { User } from './schema/user.schema';
 import { CloudinaryService } from '@/database/cloudinary/cloudinary.service';
 import { UpdateRoleDto } from './dto/update-role.dto';

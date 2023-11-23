@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../../../shared/interfaces/jwt.interface';
 import { User } from '@/modules/users/schema/user.schema';
 import { RedisService } from '@/database/redis/redis.service';
-import { compare } from '@/shared/utils/encrypt';
+import { compare } from '@/shared/utils/encrypt.util';
 import { Request } from 'express';
 
 @Injectable()
