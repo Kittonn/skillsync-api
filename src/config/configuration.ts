@@ -3,11 +3,6 @@ export default () => ({
   mongo: {
     uri: process.env.DATABASE_URL,
   },
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: +process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD,
-  },
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
