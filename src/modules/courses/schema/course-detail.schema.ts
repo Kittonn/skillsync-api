@@ -1,7 +1,7 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-import { Link } from './link.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Link, LinkSchema } from './link.schema';
 import { Document } from 'mongoose';
-import { Comment } from './comment.schema';
+import { Comment, CommentSchema } from './comment.schema';
 
 @Schema()
 export class CourseDetail extends Document {
@@ -23,12 +23,14 @@ export class CourseDetail extends Document {
   @Prop()
   videoPlayer: string;
 
-  @Prop({ type: [Link] })
+  @Prop({ type: [LinkSchema] })
   links: Link[];
 
   @Prop()
   suggestion: string;
 
-  @Prop({ type: [Comment] })
+  @Prop({ type: [CommentSchema] })
   questions: Comment[];
 }
+
+export const CourseDetailSchema = SchemaFactory.createForClass(CourseDetail);

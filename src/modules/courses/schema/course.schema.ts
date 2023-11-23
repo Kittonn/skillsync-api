@@ -2,10 +2,10 @@ import { Level } from '@/shared/enums/level.enum';
 import { Thumbnail } from '@/shared/interfaces/course.interface';
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Benefit } from './benefit.schema';
-import { Prerequisite } from './prerequisite.schema';
-import { CourseDetail } from './course-detail.schema';
-import { Review } from './review.schema';
+import { Benefit, BenefitSchema } from './benefit.schema';
+import { Prerequisite, PrerequisiteSchema } from './prerequisite.schema';
+import { CourseDetail, CourseDetailSchema } from './course-detail.schema';
+import { Review, ReviewSchema } from './review.schema';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
@@ -33,13 +33,13 @@ export class Course extends Document {
   @Prop()
   demoUrl: string;
 
-  @Prop({ type: [Benefit] })
+  @Prop({ type: [BenefitSchema] })
   benefits: Benefit[];
 
-  @Prop({ type: [Prerequisite] })
+  @Prop({ type: [PrerequisiteSchema] })
   prerequisites: Prerequisite[];
 
-  @Prop({ type: [CourseDetail] })
+  @Prop({ type: [CourseDetailSchema] })
   courseDetails: CourseDetail[];
 
   @Prop({ default: 0 })
@@ -48,7 +48,7 @@ export class Course extends Document {
   @Prop({ default: 0 })
   purchased: number;
 
-  @Prop({ type: [Review] })
+  @Prop({ type: [ReviewSchema] })
   reviews: Review[];
 }
 
