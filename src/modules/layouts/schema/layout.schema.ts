@@ -1,23 +1,23 @@
 import { Type } from '@/shared/enums/type.enum';
-import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Banner } from './banner.schema';
-import { Faq } from './faq.schema';
-import { Category } from './category.schema';
+import { Banner, BannerSchema } from './banner.schema';
+import { Faq, FaqSchema } from './faq.schema';
+import { Category, CategorySchema } from './category.schema';
 
 @Schema()
 export class Layout extends Document {
   @Prop({ required: true })
   type: Type;
 
-  @Prop({ type: [Faq] })
+  @Prop({ type: [FaqSchema] })
   faq: Faq[];
 
-  @Prop({ type: [Category] })
+  @Prop({ type: [CategorySchema] })
   categories: Category[];
 
   @Prop({
-    type: Banner,
+    type: BannerSchema,
   })
   banner: Banner;
 }
