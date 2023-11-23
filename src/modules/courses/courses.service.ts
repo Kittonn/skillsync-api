@@ -370,4 +370,16 @@ export class CoursesService {
 
     return updatedCourse;
   }
+
+  async deleteCourse(courseId: string): Promise<string> {
+    const course = await this.coursesRepository.findOne({ _id: courseId });
+
+    if (!course) {
+      throw new NotFoundException();
+    }
+
+    await this.coursesRepository.delete({ _id: courseId });
+
+    return 'Course deleted';
+  }
 }

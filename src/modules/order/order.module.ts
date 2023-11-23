@@ -20,5 +20,6 @@ import { NodeMailerModule } from '../node-mailer/node-mailer.module';
   ],
   controllers: [OrderController],
   providers: [OrderService, OrderRepository],
+  exports: [OrderRepository]
 })
 export class OrderModule {}

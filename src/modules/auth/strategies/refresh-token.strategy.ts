@@ -4,9 +4,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../../../shared/interfaces/jwt.interface';
 import { User } from '@/modules/users/schema/user.schema';
-import { RedisService } from '@/database/redis/redis.service';
-import { compare } from '@/shared/utils/encrypt';
+import { compare } from '@/shared/utils/encrypt.util';
 import { Request } from 'express';
+import { UsersRepository } from '@/modules/users/users.repository';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -15,7 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly redisService: RedisService,
+    private readonly usersRepository: UsersRepository,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -27,7 +27,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   async validate(request: Request, payload: JwtPayload): Promise<User> {
     const refreshToken = request.headers.authorization.split(' ')[1];
 
-    const user = JSON.parse(await this.redisService.get(payload.sub));
+    const user = await this.usersRepository.findOne({ _id: payload.sub });
 
     if (!user) {
       throw new UnauthorizedException();

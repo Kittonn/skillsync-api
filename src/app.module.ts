@@ -12,6 +12,7 @@ import { OrderModule } from './modules/order/order.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import configuration from '@/config/configuration';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     OrderModule,
     NotificationModule,
     ScheduleModule.forRoot(),
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

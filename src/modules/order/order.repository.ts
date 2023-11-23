@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './schema/order.schema';
 import { FilterQuery, Model, QueryOptions } from 'mongoose';
+import { Last12MonthsData } from '@/shared/interfaces/analytics.interface';
+import { generateLast12MonthsData } from '@/shared/utils/analytics.util';
 
 @Injectable()
 export class OrderRepository {
@@ -38,5 +40,9 @@ export class OrderRepository {
 
   async delete(filter: FilterQuery<Order>): Promise<Order> {
     return this.orderModel.findOneAndDelete(filter);
+  }
+
+  async getAnalytics(): Promise<Last12MonthsData> {
+    return await generateLast12MonthsData(this.orderModel);
   }
 }
