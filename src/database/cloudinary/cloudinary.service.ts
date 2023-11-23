@@ -5,17 +5,21 @@ import * as streamifier from 'streamifier';
 @Injectable()
 export class CloudinaryService {
   constructor() {}
-
+  
   async uploadFile(
     file: Express.Multer.File,
+    folder: string,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
-      const uploadStream = v2.uploader.upload_stream((error, result) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(result);
-      });
+      const uploadStream = v2.uploader.upload_stream(
+        { folder },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        },
+      );
 
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
