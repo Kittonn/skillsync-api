@@ -1,5 +1,5 @@
 import { Thumbnail } from '@/shared/interfaces/course.interface';
-import { Prop, Schema, raw } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema()
@@ -18,3 +18,5 @@ export class Banner extends Document {
   )
   image: Thumbnail;
 }
+
+export const BannerSchema = SchemaFactory.createForClass(Banner)

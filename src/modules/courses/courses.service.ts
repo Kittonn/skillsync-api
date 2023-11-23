@@ -162,7 +162,10 @@ export class CoursesService {
       throw new ConflictException();
     }
 
-    const uploadedFile = await this.cloudinaryService.uploadFile(file, 'courses');
+    const uploadedFile = await this.cloudinaryService.uploadFile(
+      file,
+      'courses',
+    );
 
     if (course.thumbnail?.publicId) {
       await this.cloudinaryService.deleteFile(course.thumbnail.publicId);
