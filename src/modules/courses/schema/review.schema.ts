@@ -14,7 +14,7 @@ export class Review extends Document {
   @Prop()
   comment: string;
 
-  @Prop({ type: [CommentSchema]})
+  @Prop({ type: [CommentSchema] })
   reviewReplies: Comment[];
 }
 

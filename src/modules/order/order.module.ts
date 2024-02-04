@@ -16,10 +16,10 @@ import { NodeMailerModule } from '../node-mailer/node-mailer.module';
     NotificationModule,
     CoursesModule,
     NotificationModule,
-    NodeMailerModule
+    NodeMailerModule,
   ],
   controllers: [OrderController],
   providers: [OrderService, OrderRepository],
-  exports: [OrderRepository]
+  exports: [OrderRepository],
 })
 export class OrderModule {}

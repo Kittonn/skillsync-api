@@ -13,14 +13,14 @@ export class AnalyticsService {
   ) {}
 
   async getUsersAnalytics(): Promise<Last12MonthsData> {
-    return this.usersRepository.getAnalytics();
+    return await this.usersRepository.getAnalytics();
   }
 
   async getCoursesAnalytics(): Promise<Last12MonthsData> {
-    return this.coursesRepository.getAnalytics();
+    return await this.coursesRepository.getAnalytics();
   }
 
   async getOrderAnalytics(): Promise<Last12MonthsData> {
-    return this.orderRepository.getAnalytics();
+    return await this.orderRepository.getAnalytics();
   }
 }

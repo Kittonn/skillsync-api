@@ -12,22 +12,22 @@ export class OrderRepository {
   ) {}
 
   async create(order: Object): Promise<Order> {
-    return this.orderModel.create(order);
+    return await this.orderModel.create(order);
   }
 
   async findAll(): Promise<Order[]> {
-    return this.orderModel.find();
+    return await this.orderModel.find();
   }
 
   async findOne(filter: FilterQuery<Order>): Promise<Order> {
-    return this.orderModel.findOne(filter);
+    return await this.orderModel.findOne(filter);
   }
 
   async find(
     filter: FilterQuery<Order>,
     options?: QueryOptions,
   ): Promise<Order[]> {
-    return this.orderModel.find(filter, null, options);
+    return await this.orderModel.find(filter, null, options);
   }
 
   async update(
@@ -35,11 +35,11 @@ export class OrderRepository {
     data: Object,
     options = { new: true },
   ): Promise<Order> {
-    return this.orderModel.findOneAndUpdate(filter, data, options);
+    return await this.orderModel.findOneAndUpdate(filter, data, options);
   }
 
   async delete(filter: FilterQuery<Order>): Promise<Order> {
-    return this.orderModel.findOneAndDelete(filter);
+    return await this.orderModel.findOneAndDelete(filter);
   }
 
   async getAnalytics(): Promise<Last12MonthsData> {

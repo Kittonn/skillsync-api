@@ -22,7 +22,7 @@ export class OrderService {
   ) {}
 
   async getOrders(): Promise<Order[]> {
-    return this.orderRepository.find(
+    return await this.orderRepository.find(
       {},
       { populate: 'user course', sort: { createdAt: -1 } },
     );

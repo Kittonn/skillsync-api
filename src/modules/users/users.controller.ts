@@ -29,14 +29,14 @@ export class UsersController {
 
   @Get('/me')
   async getUserInfo(@GetUser('_id') userId: string): Promise<User> {
-    return this.usersService.getUserInfo(userId);
+    return await this.usersService.getUserInfo(userId);
   }
 
   @Get()
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async getAllUsers(): Promise<User[]> {
-    return this.usersService.getAllUsers();
+    return await this.usersService.getAllUsers();
   }
 
   @Put()
@@ -44,7 +44,7 @@ export class UsersController {
     @GetUser('_id') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.updateUserInfo(userId, updateUserDto);
+    return await this.usersService.updateUserInfo(userId, updateUserDto);
   }
 
   @Put('/change-password')
@@ -52,7 +52,7 @@ export class UsersController {
     @GetUser() user: User,
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<User> {
-    return this.usersService.updatePassword(user, changePasswordDto);
+    return await this.usersService.updatePassword(user, changePasswordDto);
   }
 
   @Put('/change-avatar')
@@ -67,20 +67,20 @@ export class UsersController {
     file: Express.Multer.File,
     @GetUser('_id') userId: string,
   ): Promise<User> {
-    return this.usersService.updateAvatar(file, userId);
+    return await this.usersService.updateAvatar(file, userId);
   }
 
   @Put('/update-role')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async updateRole(@Body() updateRoleDto: UpdateRoleDto): Promise<User> {
-    return this.usersService.updateRole(updateRoleDto);
+    return await this.usersService.updateRole(updateRoleDto);
   }
 
   @Delete('/:userId')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async deleteUser(@Param('userId') userId: string): Promise<string> {
-    return this.usersService.deleteUser(userId);
+    return await this.usersService.deleteUser(userId);
   }
 }

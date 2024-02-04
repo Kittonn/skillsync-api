@@ -14,7 +14,7 @@ export class NotificationController {
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async getNotifications(): Promise<Notification[]> {
-    return this.notificationService.getNotifications();
+    return await this.notificationService.getNotifications();
   }
 
   @Put('/:notificationId')
@@ -23,6 +23,6 @@ export class NotificationController {
   async updateNotification(
     @Param('notificationId') notificationId: string,
   ): Promise<Notification> {
-    return this.notificationService.updateNotification(notificationId);
+    return await this.notificationService.updateNotification(notificationId);
   }
 }

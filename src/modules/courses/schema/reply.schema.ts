@@ -1,6 +1,6 @@
-import { User } from "@/modules/users/schema/user.schema";
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Document } from "mongoose";
+import { User } from '@/modules/users/schema/user.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
 
 @Schema()
 export class Reply extends Document {

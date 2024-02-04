@@ -12,25 +12,25 @@ export class CoursesRepository {
   ) {}
 
   async create(course: Object): Promise<Course> {
-    return this.courseModel.create(course);
+    return await this.courseModel.create(course);
   }
 
   async findAll(): Promise<Course[]> {
-    return this.courseModel.find();
+    return await this.courseModel.find();
   }
 
   async findOne(
     filter: FilterQuery<Course>,
     options?: QueryOptions,
   ): Promise<Course> {
-    return this.courseModel.findOne(filter, null, options);
+    return await this.courseModel.findOne(filter, null, options);
   }
 
   async find(
     filter: FilterQuery<Course>,
     options?: QueryOptions,
   ): Promise<Course[]> {
-    return this.courseModel.find(filter, null, options);
+    return await this.courseModel.find(filter, null, options);
   }
 
   async update(
@@ -38,11 +38,11 @@ export class CoursesRepository {
     data: Object,
     options = { new: true },
   ): Promise<Course> {
-    return this.courseModel.findOneAndUpdate(filter, data, options);
+    return await this.courseModel.findOneAndUpdate(filter, data, options);
   }
 
   async delete(filter: FilterQuery<Course>): Promise<Course> {
-    return this.courseModel.findOneAndDelete(filter);
+    return await this.courseModel.findOneAndDelete(filter);
   }
 
   async getAnalytics(): Promise<Last12MonthsData> {

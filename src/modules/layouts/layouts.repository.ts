@@ -10,22 +10,22 @@ export class LayoutsRepository {
   ) {}
 
   async create(layout: Object): Promise<Layout> {
-    return this.layoutModel.create(layout);
+    return await this.layoutModel.create(layout);
   }
 
   async findAll(): Promise<Layout[]> {
-    return this.layoutModel.find();
+    return await this.layoutModel.find();
   }
 
   async find(
     filter: FilterQuery<Layout>,
     options?: QueryOptions,
   ): Promise<Layout[]> {
-    return this.layoutModel.find(filter, null, options);
+    return await this.layoutModel.find(filter, null, options);
   }
 
   async findOne(filter: FilterQuery<Layout>): Promise<Layout> {
-    return this.layoutModel.findOne(filter);
+    return await this.layoutModel.findOne(filter);
   }
 
   async update(
@@ -33,10 +33,10 @@ export class LayoutsRepository {
     data: UpdateQuery<Layout>,
     options = { new: true },
   ): Promise<Layout> {
-    return this.layoutModel.findOneAndUpdate(filter, data, options);
+    return await this.layoutModel.findOneAndUpdate(filter, data, options);
   }
 
   async delete(filter: FilterQuery<Layout>): Promise<Layout> {
-    return this.layoutModel.findOneAndDelete(filter);
+    return await this.layoutModel.findOneAndDelete(filter);
   }
 }

@@ -11,7 +11,10 @@ export class NotificationService {
   ) {}
 
   async getNotifications(): Promise<Notification[]> {
-    return this.notificationRepository.find({}, { sort: { createdAt: -1 } });
+    return await this.notificationRepository.find(
+      {},
+      { sort: { createdAt: -1 } },
+    );
   }
 
   async updateNotification(notificationId: string): Promise<Notification> {
@@ -29,6 +32,7 @@ export class NotificationService {
 
     return notification;
   }
+
   @Cron('0 0 0 * * *')
   async deleteNotification() {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);

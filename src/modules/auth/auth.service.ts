@@ -42,7 +42,7 @@ export class AuthService {
 
     const payload = { activationCode, user } as IActivationPayload;
 
-    const activationToken = this.jwtService.sign(payload, {
+    const activationToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('activation.secret'),
       expiresIn: this.configService.get('activation.expiresIn'),
     });
@@ -53,9 +53,14 @@ export class AuthService {
   private async verifyActivationToken(
     activationToken: string,
   ): Promise<IActivationPayload> {
-    return this.jwtService.verify(activationToken, {
-      secret: this.configService.get('activation.secret'),
-    }) as IActivationPayload;
+    const payload: IActivationPayload = await this.jwtService.verify(
+      activationToken,
+      {
+        secret: this.configService.get('activation.secret'),
+      },
+    );
+
+    return payload;
   }
 
   private async createToken(payload: JwtPayload): Promise<ICreateToken> {
@@ -154,10 +159,7 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    const updatedUser = await this.usersRepository.update(
-      { _id: existUser.id },
-      { refreshToken },
-    );
+    await this.usersRepository.update({ _id: existUser.id }, { refreshToken });
 
     return token;
   }
@@ -181,10 +183,7 @@ export class AuthService {
 
     const refreshToken = await hash(token.refreshToken);
 
-    const updatedUser = await this.usersRepository.update(
-      { _id: userId },
-      { refreshToken },
-    );
+    await this.usersRepository.update({ _id: userId }, { refreshToken });
 
     return token;
   }

@@ -12,22 +12,22 @@ export class UsersRepository {
   ) {}
 
   async create(user: Object): Promise<User> {
-    return this.userModel.create(user);
+    return await this.userModel.create(user);
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find();
+    return await this.userModel.find();
   }
 
   async findOne(filter: FilterQuery<User>): Promise<User> {
-    return this.userModel.findOne(filter);
+    return await this.userModel.findOne(filter);
   }
 
   async find(
     filter: FilterQuery<User>,
     options?: QueryOptions,
   ): Promise<User[]> {
-    return this.userModel.find(filter, null, options);
+    return await this.userModel.find(filter, null, options);
   }
 
   async update(
@@ -35,11 +35,11 @@ export class UsersRepository {
     data: UpdateQuery<User>,
     options = { new: true },
   ): Promise<User> {
-    return this.userModel.findOneAndUpdate(filter, data, options);
+    return await this.userModel.findOneAndUpdate(filter, data, options);
   }
 
   async delete(filter: FilterQuery<User>): Promise<User> {
-    return this.userModel.findOneAndDelete(filter);
+    return await this.userModel.findOneAndDelete(filter);
   }
 
   async getAnalytics(): Promise<Last12MonthsData> {

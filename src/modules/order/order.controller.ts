@@ -17,7 +17,7 @@ export class OrderController {
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async getOrders() {
-    return this.orderService.getOrders();
+    return await this.orderService.getOrders();
   }
 
   @Post()
@@ -25,6 +25,6 @@ export class OrderController {
     @Body() createOrderDto: CreateOrderDto,
     @GetUser('_id') userId: string,
   ): Promise<Order> {
-    return this.orderService.createOrder(userId, createOrderDto);
+    return await this.orderService.createOrder(userId, createOrderDto);
   }
 }

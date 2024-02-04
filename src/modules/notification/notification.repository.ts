@@ -11,22 +11,22 @@ export class NotificationRepository {
   ) {}
 
   async create(notification: Object): Promise<Notification> {
-    return this.notificationModel.create(notification);
+    return await this.notificationModel.create(notification);
   }
 
   async findAll(): Promise<Notification[]> {
-    return this.notificationModel.find();
+    return await this.notificationModel.find();
   }
 
   async findOne(filter: FilterQuery<Notification>): Promise<Notification> {
-    return this.notificationModel.findOne(filter);
+    return await this.notificationModel.findOne(filter);
   }
 
   async find(
     filter: FilterQuery<Notification>,
     options?: QueryOptions,
   ): Promise<Notification[]> {
-    return this.notificationModel.find(filter, null, options);
+    return await this.notificationModel.find(filter, null, options);
   }
 
   async update(
@@ -34,15 +34,15 @@ export class NotificationRepository {
     data: Object,
     options = { new: true },
   ): Promise<Notification> {
-    return this.notificationModel.findOneAndUpdate(filter, data, options);
+    return await this.notificationModel.findOneAndUpdate(filter, data, options);
   }
 
   async delete(filter: FilterQuery<Notification>): Promise<Notification> {
-    return this.notificationModel.findOneAndDelete(filter);
+    return await this.notificationModel.findOneAndDelete(filter);
   }
 
   async deleteMany(filter: FilterQuery<Notification>): Promise<number> {
     const result = await this.notificationModel.deleteMany(filter);
-    return result.deletedCount;
+    return await result.deletedCount;
   }
 }

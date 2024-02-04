@@ -19,4 +19,4 @@ export class Banner extends Document {
   image: Thumbnail;
 }
 
-export const BannerSchema = SchemaFactory.createForClass(Banner)
+export const BannerSchema = SchemaFactory.createForClass(Banner);

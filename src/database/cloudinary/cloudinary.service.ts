@@ -5,7 +5,7 @@ import * as streamifier from 'streamifier';
 @Injectable()
 export class CloudinaryService {
   constructor() {}
-  
+
   async uploadFile(
     file: Express.Multer.File,
     folder: string,

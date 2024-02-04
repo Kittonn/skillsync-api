@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Put,
   UploadedFile,
@@ -25,15 +24,15 @@ export class LayoutsController {
   constructor(private readonly layoutsService: LayoutsService) {}
 
   @Get()
-  find(@Body() getLayoutDto: GetLayoutDto): Promise<Layout> {
-    return this.layoutsService.getLayoutByType(getLayoutDto);
+  async find(@Body() getLayoutDto: GetLayoutDto): Promise<Layout> {
+    return await this.layoutsService.getLayoutByType(getLayoutDto);
   }
 
   @Post()
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
-  create(
+  async create(
     @UploadedFile(
       new FileValidationPipe({
         maxSize: 10 * 1024 * 1024,
@@ -43,14 +42,14 @@ export class LayoutsController {
     file: Express.Multer.File,
     @Body() createLayoutDto: CreateLayoutDto,
   ): Promise<Layout> {
-    return this.layoutsService.createLayout(file, createLayoutDto);
+    return await this.layoutsService.createLayout(file, createLayoutDto);
   }
 
   @Put()
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
-  update(
+  async update(
     @UploadedFile(
       new FileValidationPipe({
         maxSize: 10 * 1024 * 1024,
@@ -60,6 +59,6 @@ export class LayoutsController {
     file: Express.Multer.File,
     @Body() updateLayoutDto: CreateLayoutDto,
   ): Promise<Layout> {
-    return this.layoutsService.updateLayout(file, updateLayoutDto);
+    return await this.layoutsService.updateLayout(file, updateLayoutDto);
   }
 }

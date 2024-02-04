@@ -19,31 +19,31 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto): Promise<IRegisterResponse> {
-    return this.authService.register(registerDto);
+    return await this.authService.register(registerDto);
   }
 
   @Post('activate')
   async activate(
     @Body() activationDto: ActivationDto,
   ): Promise<IActivateUserResponse> {
-    return this.authService.activate(activationDto);
+    return await this.authService.activate(activationDto);
   }
 
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<ILoginResponse> {
-    return this.authService.login(loginDto);
+    return await this.authService.login(loginDto);
   }
 
   @Post('logout')
   @UseGuards(AccessTokenGuard)
   async logout(@GetUser('_id') userId: string): Promise<ILogoutResponse> {
     console.log(userId);
-    return this.authService.logout(userId);
+    return await this.authService.logout(userId);
   }
 
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   async refresh(@GetUser('_id') userId: string) {
-    return this.authService.refresh(userId);
+    return await this.authService.refresh(userId);
   }
 }

@@ -33,19 +33,19 @@ export class CoursesController {
 
   @Get()
   async getAllCoursesWithNoAuth(): Promise<Course[]> {
-    return this.coursesService.getAllCoursesWithNoAuth();
+    return await this.coursesService.getAllCoursesWithNoAuth();
   }
 
   @Get('/all')
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async getAllCourses(): Promise<Course[]> {
-    return this.coursesService.getAllCourses();
+    return await this.coursesService.getAllCourses();
   }
 
   @Get(':id')
   async getCourseById(@Param('id') courseId: string): Promise<Course> {
-    return this.coursesService.getCourseById(courseId);
+    return await this.coursesService.getCourseById(courseId);
   }
 
   @Get('/content/:id')
@@ -54,7 +54,7 @@ export class CoursesController {
     @Param('id') courseId: string,
     @GetUser() user: User,
   ) {
-    return this.coursesService.getCourseContentById(courseId, user);
+    return await this.coursesService.getCourseContentById(courseId, user);
   }
 
   @Post()
@@ -71,7 +71,7 @@ export class CoursesController {
     file: Express.Multer.File,
     @Body() createCourseDto: CreateCourseDto,
   ): Promise<Course> {
-    return this.coursesService.createCourse(createCourseDto, file);
+    return await this.coursesService.createCourse(createCourseDto, file);
   }
 
   @Put('/:id')
@@ -89,7 +89,11 @@ export class CoursesController {
     @Body() updateCourseDto: UpdateCourseDto,
     @Param('id') courseId: string,
   ): Promise<Course> {
-    return this.coursesService.updateCourse(courseId, updateCourseDto, file);
+    return await this.coursesService.updateCourse(
+      courseId,
+      updateCourseDto,
+      file,
+    );
   }
 
   @Post('/review/:id')
@@ -99,7 +103,11 @@ export class CoursesController {
     @Body() createReviewDto: CreateReviewDto,
     @GetUser() user: User,
   ): Promise<Course> {
-    return this.coursesService.createReview(courseId, user, createReviewDto);
+    return await this.coursesService.createReview(
+      courseId,
+      user,
+      createReviewDto,
+    );
   }
 
   @Post('/review/:id/reply')
@@ -110,7 +118,7 @@ export class CoursesController {
     @Body() createReplyReviewDto: CreateReplyReviewDto,
     @GetUser() user: User,
   ): Promise<Course> {
-    return this.coursesService.addReviewReply(
+    return await this.coursesService.addReviewReply(
       courseId,
       user,
       createReplyReviewDto,
@@ -124,7 +132,7 @@ export class CoursesController {
     @Body() createQuestionDto: CreateQuestionDto,
     @GetUser() user: User,
   ): Promise<Course> {
-    return this.coursesService.createQuestion(
+    return await this.coursesService.createQuestion(
       courseId,
       user,
       createQuestionDto,
@@ -138,13 +146,17 @@ export class CoursesController {
     @Body() createAnswerDto: CreateAnswerDto,
     @GetUser() user: User,
   ): Promise<Course> {
-    return this.coursesService.createAnswer(courseId, user, createAnswerDto);
+    return await this.coursesService.createAnswer(
+      courseId,
+      user,
+      createAnswerDto,
+    );
   }
 
   @Delete('/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async deleteCourse(@Param('id') courseId: string): Promise<string> {
-    return this.coursesService.deleteCourse(courseId);
+    return await this.coursesService.deleteCourse(courseId);
   }
 }
